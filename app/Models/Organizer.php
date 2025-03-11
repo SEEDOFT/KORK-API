@@ -12,7 +12,8 @@ class Organizer extends Model
     protected $fillable = [
         'name',
         'email',
-        'description'
+        'description',
+        'event_id'
     ];
 
     public function event(): BelongsTo

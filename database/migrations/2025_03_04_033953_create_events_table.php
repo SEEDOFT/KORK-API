@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignIdFor(User::class);
-            $table->foreignIdFor(Organizer::class);
 
             $table->string('event_name', 150);
             $table->string('event_type', 50);

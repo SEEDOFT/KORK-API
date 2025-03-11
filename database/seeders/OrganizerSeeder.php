@@ -14,6 +14,13 @@ class OrganizerSeeder extends Seeder
      */
     public function run(): void
     {
-        Organizer::factory(100)->create();
+        $events = Event::all();
+
+        for ($i = 0; $i < count($events); $i++) {
+            $event = $events->random();
+            Organizer::factory()->create([
+                'event_id' => $event->id
+            ]);
+        }
     }
 }

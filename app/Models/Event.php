@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Event extends Model
 {
@@ -13,7 +14,6 @@ class Event extends Model
 
     protected $fillable = [
         'user_id',
-        'organizer_id',
         'event_type',
         'event_name',
         'description',
@@ -23,9 +23,9 @@ class Event extends Model
         'end_time',
     ];
 
-    public function organizer(): BelongsTo
+    public function organizer(): HasOne
     {
-        return $this->BelongsTo(Organizer::class);
+        return $this->HasOne(Organizer::class);
     }
 
     public function user(): BelongsTo
