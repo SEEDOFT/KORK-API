@@ -18,6 +18,9 @@ Route::apiResource('/user', UserController::class)
     ->only(['show', 'update', 'destroy'])
     ->middleware('auth:sanctum');
 
+Route::apiResource('/user', UserController::class)
+    ->only(['show', 'index']);
+
 Route::apiResource('/event', EventController::class)
     ->only(['index', 'show']);
 
