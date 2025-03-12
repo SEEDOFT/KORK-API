@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -17,31 +18,6 @@ class UserController extends Controller
     public function index()
     {
         return UserResource::collection(User::paginate());
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(RegisterUserRequest $registerRequest)
-    {
-        $validate = $registerRequest->validated();
-        $user = User::create([
-            'first_name' => $validate['first_name'],
-            'last_name' => $validate['last_name'],
-            'gender' => $validate['gender'],
-            'dob' => $validate['dob'],
-            'nationality' => $validate['nationality'] ?? null,
-            'profile_url' => $validate['profile_url'],
-            'location' => $validate['location'],
-            'phone_number' => $validate['phone_number'] ?? null,
-            'email' => $validate['email'],
-            'password' => Hash::make($validate['password']),
-        ]);
-
-        return UserResource::make([
-            $user,
-            'register_token' => $user->createToken('api-token')->plainTextToken,
-        ]);
     }
 
     /**
@@ -57,7 +33,28 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $updateRequest, User $user)
     {
-        $user->update($updateRequest->validated());
+
+        Gate::authorize('update', $user);
+
+        $data = $updateRequest->validated();
+
+        $uploadPath = public_path('user');
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        if ($updateRequest->hasFile('profile_url')) {
+            if (!empty($user->profile_url) && file_exists($uploadPath . '/' . $user->profile_url)) {
+                unlink($uploadPath . '/' . $user->profile_url);
+            }
+
+            $imageName = time() . '.' . $updateRequest->file('profile_url')->extension();
+            $updateRequest->file('profile_url')->move($uploadPath, $imageName);
+
+            $data['profile_url'] = $imageName;
+        }
+
+        $user->update($data);
 
         return UserResource::make($user);
     }

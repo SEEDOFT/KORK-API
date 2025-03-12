@@ -28,7 +28,7 @@ class UpdateUserRequest extends FormRequest
             'gender' => ['sometimes', 'in:male,female,others'],
             'dob' => ['sometimes', 'date'],
             'nationality' => ['sometimes', 'string', 'max:255'],
-            'profile_url' => ['sometimes', 'url'],
+            'profile_url' => ['sometimes', 'image'],
             'location' => ['sometimes', 'string', 'max:255'],
             'phone_number' => ['sometimes', 'string', 'max:20'],
             'email' => ['sometimes', 'email', 'unique:users,email'],

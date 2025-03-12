@@ -1,20 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PasswordResetRequest;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-class AuthController extends Controller
+class AuthenticationController extends Controller
 {
+    /**
+     * Login of current user
+     * @param \App\Http\Requests\LoginRequest $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required',
             'password' => 'required'
         ]);
 
@@ -28,7 +33,7 @@ class AuthController extends Controller
 
         if (!Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'password' => ['The provided credentials is incorrect...!']
+                'email' => ['The provided credentials is incorrect...!']
             ]);
         }
 
@@ -37,6 +42,7 @@ class AuthController extends Controller
         return response()->json([
             'login_token' => $token,
         ]);
+
     }
 
     public function logout(Request $request)
@@ -46,18 +52,6 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Successfully logged out.'
-        ]);
-    }
-
-    public function __invoke(PasswordResetRequest $request)
-    {
-        $request->validated();
-        auth()->user()->update([
-            'password' => Hash::make($request->input('password'))
-        ]);
-
-        return response()->json([
-            'message' => 'Password has been reset successfully.'
         ]);
     }
 }

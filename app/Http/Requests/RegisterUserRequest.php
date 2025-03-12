@@ -28,7 +28,7 @@ class RegisterUserRequest extends FormRequest
             'gender' => ['required', 'in:male,female,others'],
             'dob' => ['required', 'date'],
             'nationality' => ['required', 'string', 'max:255'],
-            'profile_url' => ['nullable', 'url'],
+            'profile_url' => ['required', 'image'],
             'location' => ['required', 'string', 'max:255'],
             'phone_number' => ['required', 'string', 'max:20'],
             'email' => ['required', 'email', 'unique:users,email'],
