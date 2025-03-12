@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterEventRequest;
+use App\Http\Requests\RegisterOrganizerRequest;
+use App\Http\Requests\RegisterTicketRequest;
 use App\Http\Resources\EventResource;
 use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
@@ -27,45 +30,54 @@ class EventController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(RegisterEventRequest $reqEvent, RegisterOrganizerRequest $reqOrg, RegisterTicketRequest $reqTicket)
     {
         Gate::authorize('create', Event::class);
 
-        $orgValidated = $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'description' => 'nullable',
-        ]);
+        $eventData = $reqEvent->validated();
+        $orgData = $reqOrg->validated();
+        $ticketData = $reqTicket->validated();
 
-        $eventValidated = array_merge(
-            $request->validate([
-                'event_name' => 'required',
-                'event_type' => 'required',
-                'description' => 'nullable',
-                'location' => 'required',
-                'poster_url' => 'required',
-                'start_time' => 'required|date',
-                'end_time' => 'required|date',
-            ]),
-            ['user_id' => $request->user()->id],
-        );
+        $uploadPath = public_path('event');
 
-        DB::beginTransaction();
-
-        try {
-
-            $event = Event::create($eventValidated);
-            $event->organizer()->create($orgValidated);
-
-            DB::commit();
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-            throw $e;
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
         }
 
-        return EventResource::make($event);
+        if ($reqEvent->hasFile('poster_url')) {
+            $imageName = time() . '.' . $reqEvent->file('poster_url')->extension();
+            $reqEvent->file('poster_url')->move($uploadPath, $imageName);
+        }
+
+        $result = DB::transaction(function () use ($eventData, $orgData, $ticketData, $imageName) {
+            $event = Event::create([
+                'event_name' => $eventData['event_name'],
+                'event_type' => $eventData['event_type'],
+                'description' => $eventData['description'],
+                'location' => $eventData['location'],
+                'poster_url' => $imageName,
+                'start_time' => $eventData['start_time'],
+                'end_time' => $eventData['end_time'],
+                'user_id' => request()->user()->id,
+            ]);
+            $event->organizer()->create([
+                'name' => $orgData['name'],
+                'email' => $orgData['email'],
+                'description' => $orgData['description'],
+            ]);
+
+            $event->tickets()->createMany(array_map(function ($ticket) {
+                return [
+                    'ticket_type' => $ticket['ticket_type'],
+                    'qty' => $ticket['qty'],
+                    'available_qty' => $ticket['qty'],
+                    'left_qty' => $ticket['qty'],
+                    'price' => $ticket['price'],
+                ];
+            }, $ticketData['tickets']));
+            return $event;
+        });
+        return EventResource::make($result);
     }
 
     /**
@@ -73,8 +85,6 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        $query = $this->loadRelationship($event->query(), $this->event_type);
-        return $this->EventResource::make($query->get());
     }
 
     /**

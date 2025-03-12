@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(Event::class);
+            $table->foreignIdFor(Event::class)->constrained()->cascadeOnDelete();
 
             $table->string('ticket_type', 10);
             $table->unsignedBigInteger('qty');

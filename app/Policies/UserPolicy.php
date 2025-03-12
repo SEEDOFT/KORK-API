@@ -10,7 +10,7 @@ class UserPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(?User $user): bool
+    public function viewAny(User $user): bool
     {
         return true;
     }
@@ -18,9 +18,9 @@ class UserPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(?User $user, User $model): bool
+    public function view(User $user, User $model): bool
     {
-        return true;
+        return $user->id === $model->id;
     }
 
     /**
@@ -36,7 +36,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->id === $model->id; //only specific user with access can update their own data
+        return $user->id === $model->id; //only specific user with access token can update their own data
     }
 
     /**
@@ -44,7 +44,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return true;
+        return $user->id === $model->id; //only specific user with access token can delete their own data
     }
 
     /**

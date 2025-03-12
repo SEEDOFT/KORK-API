@@ -40,7 +40,7 @@ class AuthenticationController extends Controller
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'login_token' => $token,
+            'token' => $token,
         ]);
 
     }

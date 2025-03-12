@@ -4,25 +4,28 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\AllUserResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * Display all user
      */
     public function index()
     {
-        return UserResource::collection(User::get());
+        return AllUserResource::collection(User::get());
     }
-
     /**
      * Display the specified resource.
      */
     public function show(User $user)
     {
+        Gate::authorize('view', $user);
+
         return UserResource::make($user);
     }
 
@@ -62,7 +65,15 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        Gate::authorize('delete', $user);
+
+        $imagePath = public_path('user/' . $user->profile_url);
+        if (file_exists($imagePath) && is_file($imagePath)) {
+            unlink($imagePath);
+        }
+
         $user->delete();
+        $user->tokens()->delete();
 
         return response()->json([
             'message' => 'User has been deleted successfully.'

@@ -15,15 +15,15 @@ return new class extends Migration {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
 
             $table->string('event_name', 150);
             $table->string('event_type', 50);
             $table->text('description');
             $table->string('location', 255);
             $table->string('poster_url', 255);
-            $table->date('start_time');
-            $table->date('end_time');
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
 
             $table->timestamps();
         });

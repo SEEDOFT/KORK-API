@@ -5,8 +5,19 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class RegisterUserResource extends JsonResource
 {
+    /**
+     * pick token by default
+     * @param mixed $resource
+     * @param mixed $token
+     */
+    public function __construct($resource, $token = null)
+    {
+        parent::__construct($resource);
+        $this->token = $token;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -25,6 +36,7 @@ class UserResource extends JsonResource
             'gender' => $this->gender,
             'profile_url' => asset('user/' . $this->profile_url),
             'location' => $this->location,
+            'token' => $this->token
         ];
     }
 }

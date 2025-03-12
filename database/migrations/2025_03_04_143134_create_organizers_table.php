@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('organizers', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(Event::class)->constrained();
+            $table->foreignIdFor(Event::class)->constrained()->cascadeOnDelete();
 
             $table->string('name', 150);
             $table->string('email')->nullable();
