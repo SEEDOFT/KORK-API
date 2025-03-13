@@ -6,26 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterEventRequest;
 use App\Http\Requests\RegisterOrganizerRequest;
 use App\Http\Requests\RegisterTicketRequest;
+use App\Http\Requests\UpdateEventRequest;
+use App\Http\Requests\UpdateOrganizerRequest;
+use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\EventResource;
 use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
     use CanLoadRelationships;
-    private array $relations = ['organizer', 'user', 'tickets'];
-    private array $event_type = ['concert', 'sport', 'fashion', 'game', 'innovation'];
-    private array $ticket_type = ['vvip', 'vip', 'standard', 'normal'];
+    private array $event_filter = ['concert', 'sport', 'fashion', 'game', 'innovation'];
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = $this->loadRelationship(Event::query(), $this->relations);
-        return EventResource::collection($query->get());
+        return EventResource::collection(Event::paginate());
     }
     /**
      * Store a newly created resource in storage.
@@ -85,14 +84,41 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
+        return EventResource::make($event);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Event $event)
+    public function update(UpdateEventRequest $reqEvent, UpdateOrganizerRequest $reqOrg, UpdateTicketRequest $reqTicket, Event $event)
     {
-        //
+        Gate::authorize('update', $event);
+
+        $eventData = $reqEvent->validated();
+        $orgData = $reqOrg->validated();
+        $ticketData = $reqTicket->validated();
+
+        $uploadPath = public_path('event');
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        if ($reqEvent->hasFile('poster_url')) {
+            if (!empty($uploadPath . '/' . $event->poster_url)) {
+                unlink($uploadPath . '/' . $event->poster_url);
+            }
+
+            $imageName = time() . '.' . $reqEvent->file('poster_url')->extension();
+            $reqEvent->file('poster_url')->move($uploadPath, $imageName);
+
+            $eventData['poster_url'] = $imageName;
+        }
+
+        $event->update($eventData);
+        $event->organizer()->update($orgData);
+        $event->tickets()->update($ticketData);
+
+        return EventResource::make($event);
     }
 
     /**
@@ -100,6 +126,18 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        //
+        Gate::authorize('delete', $event);
+
+        $imagePath = public_path('event/' . $event->poster_url);
+
+        if (file_exists($imagePath) && is_file($imagePath)) {
+            unlink($imagePath);
+        }
+
+        $event->delete();
+
+        return response()->json([
+            'message' => 'Event has been deleted successfully.'
+        ], 204);
     }
 }

@@ -23,9 +23,9 @@ class EventResource extends JsonResource
             'poster_url' => asset('event/' . $this->poster_url),
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
-            'organizer' => OrganizerResource::make($this->whenLoaded('organizer')),
-            'user' => AllUserResource::make($this->whenLoaded('user')),
-            'tickets' => TicketResource::collection($this->whenLoaded('tickets')),
+            'organizer' => OrganizerResource::make($this->organizer),
+            'user' => AllUserResource::make($this->user),
+            'tickets' => TicketResource::collection($this->tickets),
         ];
     }
 }

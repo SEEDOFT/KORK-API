@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterEventRequest extends FormRequest
+class RegisterPaymentMethodRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,9 @@ class RegisterEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_name' => ['required', 'string'],
-            'event_type' => ['required', 'string', 'in:fashion, innovation, concert, sport, game', 'max:20'],
-            'description' => ['nullable'],
-            'location' => ['required', 'string'],
-            'poster_url' => ['required', 'image'],
-            'start_time' => ['required', 'date'],
-            'end_time' => ['required', 'date', 'after:start_time'],
+            'card_number' => ['required', 'numeric'],
+            'card_holder_name' => ['required', 'numeric'],
+            'expired_date' => ['required', 'date_format:m/y'],
         ];
     }
 }

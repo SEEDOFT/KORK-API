@@ -14,6 +14,10 @@ class PaymentMethodResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'card_number' => $this->card_number,
+            'card_holder_name' => $this->card_holder_name,
+            'expired_date' => $this->expired_date
+        ];
     }
 }
