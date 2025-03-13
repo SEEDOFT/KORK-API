@@ -15,6 +15,7 @@ class PaymentMethod extends Model
         'card_number',
         'card_holder_name',
         'expired_date',
+        'cvv'
     ];
 
     public function user(): BelongsTo

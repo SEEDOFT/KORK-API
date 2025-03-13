@@ -22,7 +22,10 @@ class UpdatePaymentMethodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'card_number' => ['sometimes', 'numeric'],
+            'card_holder_name' => ['sometimes', 'string'],
+            'expired_date' => ['sometimes', 'regex:/^(0[1-9]|1[0-2])\/([0-9]{2})$/'],
+            'cvv' => ['sometimes', 'numeric'],
         ];
     }
 }

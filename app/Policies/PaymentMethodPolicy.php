@@ -13,7 +13,7 @@ class PaymentMethodPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return false;
     }
 
     /**

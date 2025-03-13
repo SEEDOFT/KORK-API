@@ -23,8 +23,9 @@ class RegisterPaymentMethodRequest extends FormRequest
     {
         return [
             'card_number' => ['required', 'numeric'],
-            'card_holder_name' => ['required', 'numeric'],
-            'expired_date' => ['required', 'date_format:m/y'],
+            'card_holder_name' => ['required', 'string'],
+            'expired_date' => ['required', 'regex:/^(0[1-9]|1[0-2])\/([0-9]{2})$/'],
+            'cvv' => ['required', 'numeric']
         ];
     }
 }

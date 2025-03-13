@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\PaymentMethodController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -29,5 +30,7 @@ Route::middleware('auth:sanctum')->group(
             ->only(['show', 'update', 'destroy']);
         Route::apiResource('/events', EventController::class)
             ->only(['store', 'update', 'destroy']);
+        Route::apiResource('/payment-method', PaymentMethodController::class)
+            ->only(['store', 'show', 'update', 'destroy']);
     }
 );

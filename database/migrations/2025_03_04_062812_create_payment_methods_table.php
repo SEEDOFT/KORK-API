@@ -18,8 +18,8 @@ return new class extends Migration {
 
             $table->string('card_number');
             $table->string('card_holder_name');
-            $table->date('expired_date');
-            $table->string('card_hash');
+            $table->string('expired_date');
+            $table->unsignedTinyInteger('cvv');
 
             $table->timestamps();
         });
