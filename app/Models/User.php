@@ -57,9 +57,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function payment_method(): HasOne
+    public function payment_methods(): HasMany
     {
-        return $this->hasOne(PaymentMethod::class);
+        return $this->HasMany(PaymentMethod::class);
     }
 
     public function events(): HasMany

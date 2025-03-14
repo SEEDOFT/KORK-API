@@ -15,7 +15,7 @@ class Ticket extends Model
         'ticket_type',
         'qty',
         'available_qty',
-        'left_qty',
+        'sold_qty',
         'price',
     ];
 

@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('ticket_type', 10);
             $table->unsignedBigInteger('qty');
             $table->unsignedBigInteger('available_qty');
-            $table->unsignedBigInteger('left_qty');
+            $table->unsignedBigInteger('sold_qty');
             $table->decimal('price', 10, 2);
 
             $table->timestamps();

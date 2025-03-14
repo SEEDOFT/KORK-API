@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
  */
 Route::post('/login', [AuthenticationController::class, 'login']);
 Route::post('/register', [RegisterUserController::class, 'register']);
+Route::post('/check-email', [RegisterUserController::class, 'checkColumnUnique']);
 Route::apiResource('/events', EventController::class)
     ->only(['index', 'show']);
 Route::apiResource('/users', UserController::class)

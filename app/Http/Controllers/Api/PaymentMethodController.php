@@ -63,6 +63,12 @@ class PaymentMethodController extends Controller
      */
     public function destroy(PaymentMethod $paymentMethod)
     {
-        //
+        Gate::authorize('delete', $paymentMethod);
+
+        $paymentMethod->delete();
+
+        return response()->json([
+            'message' => 'Payment method has been deleted successfully.'
+        ], 204);
     }
 }

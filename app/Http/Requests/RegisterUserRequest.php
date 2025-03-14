@@ -27,10 +27,10 @@ class RegisterUserRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'in:male,female,others'],
             'dob' => ['required', 'date'],
-            'nationality' => ['required', 'string', 'max:255'],
+            'nationality' => ['nullable', 'string', 'max:50'],
             'profile_url' => ['required', 'image'],
             'location' => ['required', 'string', 'max:255'],
-            'phone_number' => ['required', 'string', 'max:20'],
+            'phone_number' => ['nullable', 'string', 'max:20'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ];

@@ -24,7 +24,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        return EventResource::collection(Event::paginate());
+        return EventResource::collection(Event::get());
     }
     /**
      * Store a newly created resource in storage.
@@ -55,8 +55,8 @@ class EventController extends Controller
                 'description' => $eventData['description'],
                 'location' => $eventData['location'],
                 'poster_url' => $imageName,
-                'start_time' => $eventData['start_time'],
-                'end_time' => $eventData['end_time'],
+                'start_time' => $eventData['start_date'] . ' ' . $eventData['start_time'],
+                'end_time' => $eventData['end_date'] . ' ' . $eventData['end_time'],
                 'user_id' => request()->user()->id,
             ]);
             $event->organizer()->create([
@@ -70,7 +70,7 @@ class EventController extends Controller
                     'ticket_type' => $ticket['ticket_type'],
                     'qty' => $ticket['qty'],
                     'available_qty' => $ticket['qty'],
-                    'left_qty' => $ticket['qty'],
+                    'sold_qty' => 0,
                     'price' => $ticket['price'],
                 ];
             }, $ticketData['tickets']));
@@ -116,7 +116,18 @@ class EventController extends Controller
 
         $event->update($eventData);
         $event->organizer()->update($orgData);
-        $event->tickets()->update($ticketData);
+
+        foreach ($ticketData['tickets'] as $ticket) {
+            $event->tickets()->updateOrCreate(
+                ['ticket_type' => $ticket['ticket_type']],
+                [
+                    'qty' => $ticket['qty'],
+                    'available_qty' => $ticket['qty'],
+                    'sold_qty' => $event->tickets()->where('ticket_type', $ticket['ticket_type'])->value('sold_qty') ?? 0,
+                    'price' => $ticket['price'],
+                ]
+            );
+        }
 
         return EventResource::make($event);
     }

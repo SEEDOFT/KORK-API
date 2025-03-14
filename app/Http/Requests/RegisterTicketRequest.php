@@ -22,10 +22,10 @@ class RegisterTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tickets' => ['required', 'array'],
-            'tickets.*.ticket_type' => ['required', 'unique:tickets,ticket_type', 'string', 'in:vvip,vip,standard,normal'],
-            'tickets.*.qty' => ['required', 'integer'],
-            'tickets.*.price' => ['required', 'numeric']
+            'tickets' => ['required', 'array', 'size:4'],
+            'tickets.*.ticket_type' => ['required', 'string', 'in:vvip,vip,standard,normal', 'distinct'],
+            'tickets.*.qty' => ['required', 'integer', 'min:1'],
+            'tickets.*.price' => ['required', 'numeric', 'min:0']
         ];
     }
 }
