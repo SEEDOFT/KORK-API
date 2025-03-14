@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTicketRequest extends FormRequest
+class RegisterSingleTicketType extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,9 @@ class UpdateTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ticket_type' => ['sometimes', 'unique:tickets,ticket_type', 'string', 'in:vvip,vip,standard,normal'],
-            'qty' => ['sometimes', 'integer'],
-            'price' => ['sometimes', 'numeric']
+            'ticket_type' => ['required', 'string', 'in:vvip,vip,standard,normal', 'unique:tickets,ticket_type'],
+            'qty' => ['required', 'integer', 'min:1'],
+            'price' => ['required', 'numeric', 'min:0']
         ];
     }
 }

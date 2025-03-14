@@ -22,7 +22,7 @@ class RegisterTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tickets' => ['required', 'array', 'size:4'],
+            'tickets' => ['required', 'array', 'max:4'],
             'tickets.*.ticket_type' => ['required', 'string', 'in:vvip,vip,standard,normal', 'distinct'],
             'tickets.*.qty' => ['required', 'integer', 'min:1'],
             'tickets.*.price' => ['required', 'numeric', 'min:0']

@@ -117,18 +117,6 @@ class EventController extends Controller
         $event->update($eventData);
         $event->organizer()->update($orgData);
 
-        foreach ($ticketData['tickets'] as $ticket) {
-            $event->tickets()->updateOrCreate(
-                ['ticket_type' => $ticket['ticket_type']],
-                [
-                    'qty' => $ticket['qty'],
-                    'available_qty' => $ticket['qty'],
-                    'sold_qty' => $event->tickets()->where('ticket_type', $ticket['ticket_type'])->value('sold_qty') ?? 0,
-                    'price' => $ticket['price'],
-                ]
-            );
-        }
-
         return EventResource::make($event);
     }
 

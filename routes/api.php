@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\PaymentMethodController;
+use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -15,7 +16,9 @@ Route::post('/login', [AuthenticationController::class, 'login']);
 Route::post('/register', [RegisterUserController::class, 'register']);
 Route::post('/check-email', [RegisterUserController::class, 'checkColumnUnique']);
 Route::apiResource('/events', EventController::class)
-    ->only(['index', 'show']);
+    ->only(['index']);
+Route::apiResource('/events.tickets', TicketController::class)
+    ->only(['index']);
 Route::apiResource('/users', UserController::class)
     ->only(['index']);
 
@@ -29,9 +32,14 @@ Route::middleware('auth:sanctum')->group(
 
         Route::apiResource('/users', UserController::class)
             ->only(['show', 'update', 'destroy']);
-        Route::apiResource('/events', EventController::class)
-            ->only(['store', 'update', 'destroy']);
+
         Route::apiResource('/payment-method', PaymentMethodController::class)
             ->only(['store', 'show', 'update', 'destroy']);
+
+        Route::apiResource('/events', EventController::class)
+            ->only(['store', 'update', 'destroy']);
+
+        Route::apiResource('/events.tickets', TicketController::class)
+            ->only(['store', 'update', 'destroy']);
     }
 );
