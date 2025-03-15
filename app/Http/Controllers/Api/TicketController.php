@@ -30,7 +30,7 @@ class TicketController extends Controller
         $tk = $ticket->create([
             'event_id' => $event->id,
             'ticket_type' => $data['ticket_type'],
-            'qty' => $data['qty'],
+            'qty' => $ticket->qty + $data['qty'],
             'available_qty' => $data['qty'],
             'sold_qty' => 0,
             'price' => $data['price'],
@@ -45,7 +45,15 @@ class TicketController extends Controller
     public function update(UpdateTicketRequest $reqTicket, Event $event, Ticket $ticket)
     {
         $data = $reqTicket->validated();
-        $ticket->update($data);
+
+        $updateData = $data;
+
+        if (isset($data['qty'])) {
+            $updateData['qty'] = $ticket->qty + $data['qty'];
+            $updateData['available_qty'] = $ticket->available_qty + $data['qty'];
+        }
+
+        $ticket->update($updateData);
 
         return TicketResource::make($ticket);
     }

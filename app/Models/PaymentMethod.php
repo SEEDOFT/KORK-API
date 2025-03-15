@@ -18,6 +18,12 @@ class PaymentMethod extends Model
         'cvv'
     ];
 
+    protected $casts = [
+        'user_id' => 'integer',
+        'card_number' => 'integer',
+        'cvv' => 'integer'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class);

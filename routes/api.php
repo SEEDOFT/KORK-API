@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BookmarkController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\PaymentMethodController;
 use App\Http\Controllers\Api\TicketController;
@@ -41,5 +42,8 @@ Route::middleware('auth:sanctum')->group(
 
         Route::apiResource('/events.tickets', TicketController::class)
             ->only(['store', 'update', 'destroy']);
+
+        Route::apiResource('/users.bookmarks', BookmarkController::class)
+            ->only(['index', 'store', 'show', 'destroy']);
     }
 );

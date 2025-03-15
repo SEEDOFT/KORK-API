@@ -67,4 +67,9 @@ class User extends Authenticatable
         return $this->hasMany(Event::class);
     }
 
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
 }

@@ -23,8 +23,8 @@ class UpdateTicketRequest extends FormRequest
     {
         return [
             'ticket_type' => ['sometimes', 'unique:tickets,ticket_type', 'string', 'in:vvip,vip,standard,normal'],
-            'qty' => ['sometimes', 'integer'],
-            'price' => ['sometimes', 'numeric']
+            'qty' => ['sometimes', 'integer', 'min:0'],
+            'price' => ['sometimes', 'numeric', 'min:0']
         ];
     }
 }

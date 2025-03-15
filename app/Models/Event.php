@@ -20,7 +20,7 @@ class Event extends Model
         'location',
         'poster_url',
         'start_time',
-        'end_time',
+        'end_time'
     ];
 
     public function organizer(): HasOne
@@ -36,5 +36,10 @@ class Event extends Model
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function bookmark(): HasOne
+    {
+        return $this->hasOne(Bookmark::class);
     }
 }
