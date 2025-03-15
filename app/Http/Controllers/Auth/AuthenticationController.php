@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LoginRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\LoginResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -40,7 +39,7 @@ class AuthenticationController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        return UserResource::make($user, $token);
+        return LoginResource::make($user, $token);
 
     }
 
