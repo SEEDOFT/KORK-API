@@ -8,7 +8,14 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterUserController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
+
+/**
+ * Verification
+ */
+Route::get('email/verify/{id}', [VerificationController::class, 'verify']);
+Route::get('/email/resend', [VerificationController::class, 'resend']);
 
 /**
  * Public Route

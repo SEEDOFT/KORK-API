@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Resources\RegisterUserResource;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -44,6 +45,8 @@ class RegisterUserController extends Controller
             'email' => $validate['email'],
             'password' => Hash::make($validate['password']),
         ]);
+
+        $user->sendEmailVerificationNotification();
 
         $token = $user->createToken('api-token')->plainTextToken;
         return RegisterUserResource::make($user, $token);

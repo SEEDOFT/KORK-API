@@ -26,15 +26,15 @@ class AuthenticationController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials is incorrect...!']
-            ]);
+            return response()->json([
+                'email' => 'The provided credentials is incorrect...!'
+            ], 422);
         }
 
         if (!Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials is incorrect...!']
-            ]);
+            return response()->json([
+                'password' => 'The provided credentials is incorrect...!'
+            ], 422);
         }
 
         $token = $user->createToken('api-token')->plainTextToken;
