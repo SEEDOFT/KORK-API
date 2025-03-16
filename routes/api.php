@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 /**
  * Verification
  */
-Route::get('email/verify/{id}', [VerificationController::class, 'verify']);
-Route::get('/email/resend', [VerificationController::class, 'resend']);
+// Route::get('email/verify/{id}', [VerificationController::class, 'verify']);
+// Route::get('/email/resend', [VerificationController::class, 'resend']);
 
 /**
  * Public Route

@@ -46,7 +46,7 @@ class RegisterUserController extends Controller
             'password' => Hash::make($validate['password']),
         ]);
 
-        $user->sendEmailVerificationNotification();
+        // $user->sendEmailVerificationNotification();
 
         $token = $user->createToken('api-token')->plainTextToken;
         return RegisterUserResource::make($user, $token);
