@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Ticket;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterTicketRequest extends FormRequest
+class RegisterSingleTicketType extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,9 @@ class RegisterTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tickets' => ['required', 'array', 'max:4'],
-            'tickets.*.ticket_type' => ['required', 'string', 'in:vvip,vip,standard,normal', 'distinct'],
-            'tickets.*.qty' => ['required', 'integer', 'min:100'],
-            'tickets.*.price' => ['required', 'numeric', 'min:0']
+            'ticket_type' => ['required', 'string', 'in:vvip,vip,standard,normal', 'unique:tickets,ticket_type'],
+            'qty' => ['required', 'integer', 'min:1'],
+            'price' => ['required', 'numeric', 'min:0']
         ];
     }
 }

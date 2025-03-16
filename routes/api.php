@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\Api\BookmarkController;
-use App\Http\Controllers\Api\EventController;
-use App\Http\Controllers\Api\PaymentMethodController;
-use App\Http\Controllers\Api\TicketController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthenticationController;
+use App\Http\Controllers\Auth\CheckEmailUniqueController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterUserController;
+use App\Http\Controllers\Event\EventController;
+use App\Http\Controllers\Ticket\TicketController;
+use App\Http\Controllers\User\BookmarkController;
+use App\Http\Controllers\User\PaymentMethodController;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\Route;
  */
 Route::post('/login', [AuthenticationController::class, 'login']);
 Route::post('/register', [RegisterUserController::class, 'register']);
-Route::post('/check-email', [RegisterUserController::class, 'checkColumnUnique']);
+Route::post('/check-email', [CheckEmailUniqueController::class, 'checkColumnUnique']);
 Route::apiResource('/events', EventController::class)
     ->only(['index']);
 Route::apiResource('/events.tickets', TicketController::class)

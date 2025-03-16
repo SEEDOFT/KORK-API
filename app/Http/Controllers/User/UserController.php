@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateUserRequest;
-use App\Http\Resources\AllUserResource;
-use App\Http\Resources\UserResource;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\User\AllUserResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 

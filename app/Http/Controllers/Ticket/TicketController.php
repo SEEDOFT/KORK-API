@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Ticket;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterSingleTicketType;
-use App\Http\Requests\UpdateTicketRequest;
-use App\Http\Resources\TicketResource;
+use App\Http\Requests\Ticket\RegisterSingleTicketType;
+use App\Http\Requests\Ticket\UpdateTicketRequest;
+use App\Http\Resources\Ticket\TicketResource;
 use App\Models\Event;
 use App\Models\Ticket;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class TicketController extends Controller
 {
@@ -61,8 +59,12 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Ticket $ticket)
+    public function destroy(Event $event, Ticket $ticket)
     {
-        //
+        $ticket->delete();
+
+        return response()->json([
+            'message' => 'Ticket has been deleted successfully.'
+        ], 204);
     }
 }

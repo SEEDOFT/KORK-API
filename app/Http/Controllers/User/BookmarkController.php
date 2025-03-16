@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BookmarkResource;
+use App\Http\Resources\User\BookmarkResource;
 use App\Models\Bookmark;
-use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 

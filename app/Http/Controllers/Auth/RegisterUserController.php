@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterUserRequest;
-use App\Http\Resources\RegisterUserResource;
+use App\Http\Requests\User\RegisterUserRequest;
+use App\Http\Resources\User\RegisterUserResource;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -12,11 +12,9 @@ use Illuminate\Support\Facades\Hash;
 
 class RegisterUserController extends Controller
 {
-    private $columnName = 'email';
-    private $value = '';
     /**
      * Summary of register
-     * @param \App\Http\Requests\RegisterUserRequest $registerRequest
+     * @param RegisterUserRequest $registerRequest
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function register(RegisterUserRequest $registerRequest)
@@ -50,20 +48,5 @@ class RegisterUserController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
         return RegisterUserResource::make($user, $token);
-    }
-    public function checkColumnUnique(Request $request)
-    {
-        $email = $request->validate(['email' => ['email']]);
-        $unique = User::where('email', $email)->exists();
-
-        if ($unique) {
-            return response()->json([
-                'email' => 'Email already exists'
-            ], 409);
-        }
-
-        return response()->json([
-            'email' => 'Email doesn\'t exist yet.'
-        ], 200);
     }
 }

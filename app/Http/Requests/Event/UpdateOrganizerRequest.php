@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Event;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePaymentMethodRequest extends FormRequest
+class UpdateOrganizerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,8 @@ class UpdatePaymentMethodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'card_number' => ['sometimes', 'numeric'],
-            'card_holder_name' => ['sometimes', 'string'],
-            'expired_date' => ['sometimes', 'regex:/^(0[1-9]|1[0-2])\/([0-9]{2})$/'],
-            'cvv' => ['sometimes', 'numeric'],
+            'name' => ['sometimes', 'string'],
+            'description' => ['sometimes'],
         ];
     }
 }

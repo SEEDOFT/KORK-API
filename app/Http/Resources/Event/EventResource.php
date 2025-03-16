@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Event;
 
+use App\Http\Resources\Ticket\TicketResource;
+use App\Http\Resources\User\AllUserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

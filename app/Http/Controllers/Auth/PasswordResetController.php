@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PasswordResetRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\PasswordResetRequest;
 use Illuminate\Support\Facades\Hash;
 
 class PasswordResetController extends Controller
 {
     /**
      * Summary of __invoke
-     * @param \App\Http\Requests\PasswordResetRequest $request
+     * @param PasswordResetRequest $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function __invoke(PasswordResetRequest $request)

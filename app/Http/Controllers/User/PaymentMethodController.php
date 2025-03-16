@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterPaymentMethodRequest;
-use App\Http\Requests\UpdatePaymentMethodRequest;
-use App\Http\Resources\PaymentMethodResource;
+use App\Http\Requests\User\RegisterPaymentMethodRequest;
+use App\Http\Requests\User\UpdatePaymentMethodRequest;
+use App\Http\Resources\User\PaymentMethodResource;
 use App\Models\PaymentMethod;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
 
 class PaymentMethodController extends Controller
 {

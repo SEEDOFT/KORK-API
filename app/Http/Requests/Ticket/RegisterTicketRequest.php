@@ -11,7 +11,7 @@ class RegisterTicketRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class RegisterTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'tickets' => ['required', 'array', 'max:4'],
+            'tickets.*.ticket_type' => ['required', 'string', 'in:vvip,vip,standard,normal', 'distinct'],
+            'tickets.*.qty' => ['required', 'integer', 'min:100'],
+            'tickets.*.price' => ['required', 'numeric', 'min:0']
         ];
     }
 }

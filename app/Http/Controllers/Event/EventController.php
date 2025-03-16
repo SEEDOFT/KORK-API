@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterEventRequest;
-use App\Http\Requests\RegisterOrganizerRequest;
-use App\Http\Requests\RegisterTicketRequest;
-use App\Http\Requests\UpdateEventRequest;
-use App\Http\Requests\UpdateOrganizerRequest;
-use App\Http\Requests\UpdateTicketRequest;
-use App\Http\Resources\EventResource;
+use App\Http\Requests\Event\RegisterEventRequest;
+use App\Http\Requests\Event\RegisterOrganizerRequest;
+use App\Http\Requests\Event\UpdateEventRequest;
+use App\Http\Requests\Event\UpdateOrganizerRequest;
+use App\Http\Requests\Ticket\RegisterTicketRequest;
+use App\Http\Requests\Ticket\UpdateTicketRequest;
+use App\Http\Resources\Event\EventResource;
 use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
 use Illuminate\Support\Facades\DB;
