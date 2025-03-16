@@ -27,13 +27,13 @@ class AuthenticationController extends Controller
 
         if (!$user) {
             return response()->json([
-                'email' => 'The provided credentials is incorrect...!'
+                'error' => 'The provided credentials is incorrect...!'
             ], 422);
         }
 
         if (!Hash::check($request->password, $user->password)) {
             return response()->json([
-                'password' => 'The provided credentials is incorrect...!'
+                'error' => 'The provided credentials is incorrect...!'
             ], 422);
         }
 
