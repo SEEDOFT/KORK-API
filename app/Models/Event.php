@@ -42,4 +42,9 @@ class Event extends Model
     {
         return $this->hasOne(Bookmark::class);
     }
+
+    public function buyTicket(): HasOne
+    {
+        return $this->hasOne(BuyTicket::class);
+    }
 }

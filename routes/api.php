@@ -5,11 +5,11 @@ use App\Http\Controllers\Auth\CheckEmailUniqueController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\Event\EventController;
+use App\Http\Controllers\Ticket\BuyTicketController;
 use App\Http\Controllers\Ticket\TicketController;
 use App\Http\Controllers\User\BookmarkController;
 use App\Http\Controllers\User\PaymentMethodController;
 use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -53,5 +53,11 @@ Route::middleware('auth:sanctum')->group(
 
         Route::apiResource('/users.bookmarks', BookmarkController::class)
             ->only(['index', 'store', 'show', 'destroy']);
+
+        Route::apiResource('/users.buy-tickets', BuyTicketController::class)
+            ->only(['index', 'show']);
+
+        Route::apiResource('/events.buy-tickets', BuyTicketController::class)
+            ->only(['store', 'update', 'destroy']);
     }
 );

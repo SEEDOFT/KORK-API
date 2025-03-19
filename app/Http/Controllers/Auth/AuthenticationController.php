@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Hash;
 class AuthenticationController extends Controller
 {
     /**
-     * Login of current user
+     * Summary of login
+     * @param \App\Http\Requests\Auth\LoginRequest $request
+     * @return LoginResource|mixed|\Illuminate\Http\JsonResponse
      */
     public function login(LoginRequest $request)
     {
@@ -38,6 +40,11 @@ class AuthenticationController extends Controller
 
     }
 
+    /**
+     * Summary of logout
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function logout(Request $request)
     {
         $user = $request->user();
