@@ -33,7 +33,6 @@ class RegisterUserRequest extends FormRequest
             'phone_number' => ['nullable', 'string', 'max:20'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
-            'code' => ['required'],
         ];
     }
 }

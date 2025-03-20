@@ -20,10 +20,6 @@ class RegisterUserController extends Controller
     {
         $validate = $registerRequest->validated();
 
-        if (!VerificationCode::verify(strval($validate['code']), $validate['email'])) {
-            return response()->json(['error' => 'Invalid verification.'], 422);
-        }
-
         $uploadPath = public_path('user');
         if (!file_exists($uploadPath)) {
             mkdir($uploadPath, 0755, true);

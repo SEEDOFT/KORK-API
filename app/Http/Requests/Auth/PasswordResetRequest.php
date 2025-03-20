@@ -23,9 +23,10 @@ class PasswordResetRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'email' => ['sometimes', 'email'],
             'current_password' => ['sometimes', 'current_password'],
-            'password' => ['required', 'confirmed', Password::defaults()],
             'code' => ['sometimes'],
+            'password' => ['sometimes', 'confirmed', Password::defaults()],
         ];
     }
 }

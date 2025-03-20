@@ -14,7 +14,7 @@ use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/send', [EmailVerificationController::class, 'sendVerifyCode']);
-Route::get('/verify', [EmailVerificationController::class, 'verifySentCode']);
+Route::post('/verify', [EmailVerificationController::class, 'verifySentCode']);
 
 /**
  * Public Route

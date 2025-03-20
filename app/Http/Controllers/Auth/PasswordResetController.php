@@ -17,44 +17,52 @@ class PasswordResetController extends Controller
      */
     public function __invoke(PasswordResetRequest $request)
     {
-        // $data = $request->validated();
-        // if (isset($data['current_password'])) {
-        //     auth()->user()->update([
-        //         'password' => Hash::make($data['password'])
-        //     ]);
-        // } elseif (isset($data['code'])) {
-        //     VerificationCode::verify(strval($data['code']), request()->user()->email)
-        //         ? auth()->user()->update(['password' => Hash::make($data['password'])])
-        //         : 'error';
-        // }
+        $validated = $request->validated();
+        $user = auth()->user();
 
-        // return response()->json([
-        //     'message' => 'Password has been reset successfully.'
-        // ], 205);
-
-        return response()->json([
-            'token'
-        ]);
+        if (isset($validated['current_password'])) {
+            if (Hash::check($validated['current_password'], $user->password)) {
+                $user->update([
+                    'password' => Hash::make($validated['password'])
+                ]);
+                return response()->json([
+                    'message' => 'Password changed successfully'
+                ], 200);
+            }
+            return response()->json(['error' => 'Incorrect current password'], 400);
+        } elseif (isset($validated['code'])) {
+            if (VerificationCode::verify(strval($validated['code']), $user->email)) {
+                $user->update([
+                    'password' => Hash::make($validated['password'])
+                ]);
+                return response()->json(['message' => 'Password changed successfully'], 200);
+            }
+            return response()->json(['error' => 'Invalid or expired verification code'], 400);
+        }
+        return response()->json(['error' => 'Please provide current password or verification code'], 400);
     }
 
-    public function resetPassword(PasswordResetRequest $request, User $user)
+    public function resetPassword(PasswordResetRequest $request)
     {
         $validated = $request->validated();
 
-        if (isset($data['current_password'])) {
-            if ($user->email == $validated['email']) {
-                $user->update([
-                    'password' => Hash::make($validated['password']),
-                ]);
+        if (isset($validated['email'])) {
+            $user = User::where('email', $validated['email'])->first();
+
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
             }
+            if (!isset($validated['code'])) {
+                return response()->json(['error' => 'Code is required to reset password'], 400);
+
+            } elseif (VerificationCode::verify(strval($validated['code']), $validated['email'])) {
+                $user->update(['password' => Hash::make($validated['password'])]);
+                return response()->json(['message' => 'Password reset successfully'], 200);
+
+            }
+
+            return response()->json(['error' => 'Invalid or expired verification code'], 400);
         }
-
-        // } elseif (isset($data['code'])) {
-        //     VerificationCode::verify(strval($data['code']), $data['email']);
-        // }
-
-        return response()->json([
-            'no-token'
-        ]);
+        return response()->json(['error' => 'Email is required to reset password'], 400);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Wotz\VerificationCode\VerificationCode;
 
@@ -14,14 +15,22 @@ class EmailVerificationController extends Controller
             'email' => 'required|email'
         ]);
 
-        if (!VerificationCode::send($validated['email'])) {
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user) {
             return response()->json([
-                'message' => 'Verification code has been sent successfully.'
-            ]);
-        } else {
+                'error' => 'User not found',
+            ], 404);
+        }
+
+        if (VerificationCode::send($validated['email'])) {
             return response()->json([
                 'error' => 'Cannot send the verification code.'
-            ]);
+            ], 400);
+        } else {
+            return response()->json([
+                'message' => 'Verification code has been sent successfully.'
+            ], 200);
         }
     }
 
@@ -32,14 +41,22 @@ class EmailVerificationController extends Controller
             'code' => 'required'
         ]);
 
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user) {
+            return response()->json([
+                'error' => 'User not found',
+            ], 404);
+        }
+
         if (VerificationCode::verify(strval($validated['code']), $validated['email'])) {
             return response()->json([
-                'message' => 'Verification successfully.'
-            ]);
+                'message' => 'Email verified successfully.'
+            ], 200);
         } else {
             return response()->json([
-                'error' => 'Cannot verify the email.'
-            ]);
+                'error' => 'Invalid or expired code.'
+            ], 400);
         }
     }
 }
