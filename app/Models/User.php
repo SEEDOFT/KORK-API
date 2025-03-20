@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -56,6 +58,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function routeNotificationForVonage(Notification $notification): string
+    {
+        return $this->phone_number;
+    }
+
     public function payment_methods(): HasMany
     {
         return $this->HasMany(PaymentMethod::class);
@@ -74,6 +81,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function buyTickets(): HasMany
     {
         return $this->hasMany(BuyTicket::class);
+    }
+
+    public function attendee(): BelongsTo
+    {
+        return $this->belongsTo(Attendee::class);
     }
 
 }

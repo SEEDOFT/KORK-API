@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\CheckEmailUniqueController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\Event\EventController;
@@ -12,11 +13,8 @@ use App\Http\Controllers\User\PaymentMethodController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
-/**
- * Verification
- */
-// Route::get('email/verify/{id}', [VerificationController::class, 'verify']);
-// Route::get('/email/resend', [VerificationController::class, 'resend']);
+Route::post('/send', [EmailVerificationController::class, 'sendVerifyCode']);
+Route::get('/verify', [EmailVerificationController::class, 'verifySentCode']);
 
 /**
  * Public Route
@@ -24,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthenticationController::class, 'login']);
 Route::post('/register', [RegisterUserController::class, 'register']);
 Route::post('/check-email', [CheckEmailUniqueController::class, 'checkColumnUnique']);
+Route::post('/password-reset', [PasswordResetController::class, 'resetPassword']);
 Route::apiResource('/events', EventController::class)
     ->only(['index']);
 Route::apiResource('/events.tickets', TicketController::class)
@@ -36,7 +35,7 @@ Route::apiResource('/users', UserController::class)
  */
 Route::middleware('auth:sanctum')->group(
     function () {
-        Route::post('/password-reset', [PasswordResetController::class, '__invoke']);
+        Route::post('/password-change', [PasswordResetController::class, '__invoke']);
         Route::post('/logout', [AuthenticationController::class, 'logout']);
 
         Route::apiResource('/users', UserController::class)
@@ -50,6 +49,9 @@ Route::middleware('auth:sanctum')->group(
 
         Route::apiResource('/events.tickets', TicketController::class)
             ->only(['store', 'update', 'destroy']);
+
+        Route::apiResource('/events.attendees', TicketController::class)
+            ->only(['index']);
 
         Route::apiResource('/users.bookmarks', BookmarkController::class)
             ->only(['index', 'store', 'show', 'destroy']);

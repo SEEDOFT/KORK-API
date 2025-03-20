@@ -43,18 +43,25 @@ class TicketController extends Controller
     public function update(UpdateTicketRequest $reqTicket, Event $event, Ticket $ticket)
     {
         $data = $reqTicket->validated();
-
         $updateData = $data;
 
         if (isset($data['qty'])) {
-            $updateData['qty'] = $ticket->qty + $data['qty'];
-            $updateData['available_qty'] = $ticket->available_qty + $data['qty'];
+            if ($data['qty'] > $ticket->sold_qty && $data['qty'] > $ticket->qty) {
+                $updateData['available_qty'] = $ticket->available_qty + ($data['qty'] - $ticket->qty);
+            } elseif ($data['qty'] < $ticket->qty && $data['qty'] >= $ticket->sold_qty) {
+                $updateData['available_qty'] = max(0, $ticket->available_qty - ($ticket->qty - $data['qty']));
+            } elseif ($data['qty'] < $ticket->sold_qty) {
+                return response()->json(['error' => "New quantity cannot be lower than sold tickets"], 400);
+            }
+
+            $updateData['qty'] = $data['qty'];
         }
 
         $ticket->update($updateData);
 
         return TicketResource::make($ticket);
     }
+
 
     /**
      * Remove the specified resource from storage.

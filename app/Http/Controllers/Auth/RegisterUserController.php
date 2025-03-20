@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\RegisterUserRequest;
 use App\Http\Resources\User\RegisterUserResource;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Wotz\VerificationCode\VerificationCode;
 
 class RegisterUserController extends Controller
 {
@@ -20,6 +19,10 @@ class RegisterUserController extends Controller
     public function register(RegisterUserRequest $registerRequest)
     {
         $validate = $registerRequest->validated();
+
+        if (!VerificationCode::verify(strval($validate['code']), $validate['email'])) {
+            return response()->json(['error' => 'Invalid verification.'], 422);
+        }
 
         $uploadPath = public_path('user');
         if (!file_exists($uploadPath)) {
@@ -44,7 +47,6 @@ class RegisterUserController extends Controller
             'password' => Hash::make($validate['password']),
         ]);
 
-        // $user->sendEmailVerificationNotification();
 
         $token = $user->createToken('api-token')->plainTextToken;
         return RegisterUserResource::make($user, $token);

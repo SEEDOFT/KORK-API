@@ -20,7 +20,7 @@ class TicketResource extends JsonResource
             'ticket_type' => $this->ticket_type,
             'qty' => $this->qty,
             'available_qty' => $this->available_qty,
-            'left_qty' => $this->left_qty,
+            'sold_qty' => $this->sold_qty,
             'price' => $this->price,
         ];
     }

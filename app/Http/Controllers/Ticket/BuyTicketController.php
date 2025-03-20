@@ -10,6 +10,7 @@ use App\Models\BuyTicket;
 use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -32,43 +33,48 @@ class BuyTicketController extends Controller
     public function store(BuyTicketRequest $request, Event $event)
     {
         $ticketsData = $request->validated()['tickets'];
-        $allBoughtTicket = [];
+        $allTickets = [];
 
-        DB::transaction(function () use ($ticketsData, $event, &$allBoughtTicket) {
-            foreach ($ticketsData as $ticketData) {
-                $ticket = Ticket::findOrFail($ticketData['ticket_id']);
-                $requestedQty = $ticketData['qty'];
+        try {
 
-                if ($ticket->available_qty < $requestedQty) {
-                    return response()->json([
-                        'error' => "Insufficient quantity for ticket id: {$ticket->id}"
-                    ], 400);
+            DB::transaction(function () use ($ticketsData, $event, &$allTickets) {
+                foreach ($ticketsData as $ticketData) {
+                    $ticket = Ticket::findOrFail($ticketData['ticket_id']);
+                    $requestedQty = $ticketData['qty'];
+
+                    if ($ticket->available_qty < $requestedQty) {
+                        throw new Exception("Insufficient quantity");
+                    }
+
+                    $ticket->available_qty -= $requestedQty;
+                    $ticket->sold_qty += $requestedQty;
+                    $ticket->save();
+
+                    for ($i = 0; $i < $requestedQty; $i++) {
+                        do {
+                            $ticketCode = strtoupper(Str::random(15));
+                        } while (BuyTicket::where('ticket_code', $ticketCode)->exists());
+
+                        $allTickets[] = BuyTicket::create([
+                            'event_id' => $event->id,
+                            'ticket_id' => $ticket->id,
+                            'user_id' => request()->user()->id,
+                            'ticket_code' => $ticketCode,
+                            'price' => $ticket->price,
+                            'payment_status' => false,
+                        ]);
+                    }
                 }
-
-                $ticket->available_qty -= $requestedQty;
-                $ticket->sold_qty += $requestedQty;
-                $ticket->save();
-
-                for ($i = 0; $i < $requestedQty; $i++) {
-                    do {
-                        $ticketCode = strtoupper(Str::random(15));
-                    } while (BuyTicket::where('ticket_code', $ticketCode)->exists());
-
-                    $allBoughtTicket[] = BuyTicket::create([
-                        'event_id' => $event->id,
-                        'ticket_id' => $ticket->id,
-                        'user_id' => request()->user()->id,
-                        'ticket_code' => $ticketCode,
-                        'price' => $ticket->price,
-                        'payment_status' => false,
-                    ]);
-                }
-            }
-        });
-
-        return AllBoughtTicketResource::collection($allBoughtTicket);
-        // return $result;
+            });
+            return AllBoughtTicketResource::collection($allTickets);
+            
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 400);
+        }
     }
+
 
     /**
      * Display the specified resource.
