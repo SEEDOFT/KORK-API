@@ -16,9 +16,9 @@ return new class extends Migration {
 
             $table->foreignIdFor(Event::class)->constrained()->cascadeOnDelete();
 
-            $table->string('name', 150);
-            $table->string('email')->nullable();
-            $table->text('description')->nullable();
+            $table->string('org_name');
+            $table->string('org_email');
+            $table->text('org_description')->nullable();
 
             $table->timestamps();
         });

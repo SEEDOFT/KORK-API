@@ -30,7 +30,7 @@ Route::middleware('throttle:1000,1')->group(
         Route::post('/check-email', [CheckEmailUniqueController::class, 'checkColumnUnique']);
         Route::post('/password-reset', [PasswordResetController::class, 'resetPassword']);
         Route::apiResource('/events', EventController::class)
-            ->only(['index']);
+            ->only(['index', 'show']);
         Route::apiResource('/events.tickets', TicketController::class)
             ->scoped()
             ->only(['index']);

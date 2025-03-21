@@ -7,6 +7,7 @@ use App\Http\Requests\User\RegisterPaymentMethodRequest;
 use App\Http\Requests\User\UpdatePaymentMethodRequest;
 use App\Http\Resources\User\PaymentMethodResource;
 use App\Models\PaymentMethod;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 class PaymentMethodController extends Controller
@@ -25,7 +26,7 @@ class PaymentMethodController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(RegisterPaymentMethodRequest $request)
+    public function store(RegisterPaymentMethodRequest $request, User $user)
     {
         Gate::authorize('create', PaymentMethod::class);
 
@@ -45,7 +46,7 @@ class PaymentMethodController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PaymentMethod $paymentMethod)
+    public function show(User $user, PaymentMethod $paymentMethod)
     {
         Gate::authorize('view', $paymentMethod);
 
@@ -55,13 +56,13 @@ class PaymentMethodController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePaymentMethodRequest $reqPayment, PaymentMethod $paymentMethod)
+    public function update(UpdatePaymentMethodRequest $reqPayment, User $user, PaymentMethod $paymentMethod)
     {
         Gate::authorize('update', $paymentMethod);
 
-        $paymentData = $reqPayment->validated();
+        $validated = $reqPayment->validated();
 
-        $paymentMethod->update($paymentData);
+        $paymentMethod->update($validated);
 
         return PaymentMethodResource::make($paymentMethod);
     }
@@ -69,7 +70,7 @@ class PaymentMethodController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PaymentMethod $paymentMethod)
+    public function destroy(User $user, PaymentMethod $paymentMethod)
     {
         Gate::authorize('delete', $paymentMethod);
 

@@ -23,7 +23,7 @@ class RegisterEventRequest extends FormRequest
     {
         return [
             'event_name' => ['required', 'string'],
-            'event_type' => ['required', 'string', 'in:fashion, innovation, concert, sport, game', 'max:20'],
+            'event_type' => ['required', 'string', 'in:fashion,innovation,concert,sport,game', 'max:20'],
             'description' => ['nullable'],
             'location' => ['required', 'string'],
             'poster_url' => ['required', 'image'],

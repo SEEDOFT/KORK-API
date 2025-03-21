@@ -16,9 +16,9 @@ class OrganizerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'description' => $this->description,
+            'org_name' => $this->org_name,
+            'org_email' => $this->org_email,
+            'org_description' => $this->org_description,
         ];
     }
 }

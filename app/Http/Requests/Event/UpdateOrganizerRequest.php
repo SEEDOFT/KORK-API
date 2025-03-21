@@ -22,8 +22,9 @@ class UpdateOrganizerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'string'],
-            'description' => ['sometimes'],
+            'org_name' => ['sometimes', 'string'],
+            'org_email' => ['sometimes', 'email'],
+            'org_description' => ['sometimes'],
         ];
     }
 }

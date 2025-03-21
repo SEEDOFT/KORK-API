@@ -41,7 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
     protected $hidden = [
-        // 'email_verified_at',
+        'email_verified_at',
         'password',
         'remember_token',
     ];
@@ -59,12 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function routeNotificationForVonage(Notification $notification): string
-    {
-        return $this->phone_number;
-    }
-
-    public function payment_methods(): HasMany
+    public function paymentMethods(): HasMany
     {
         return $this->HasMany(PaymentMethod::class);
     }

@@ -17,9 +17,9 @@ class OrganizerFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->company(),
-            'email' => fake()->safeEmail(),
-            'description' => fake()->paragraph(),
+            'org_name' => fake()->company(),
+            'org_email' => fake()->safeEmail(),
+            'org_description' => fake()->paragraph(),
         ];
     }
 }

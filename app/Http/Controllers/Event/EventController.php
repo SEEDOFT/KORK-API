@@ -60,9 +60,9 @@ class EventController extends Controller
                 'user_id' => request()->user()->id,
             ]);
             $event->organizer()->create([
-                'name' => $orgData['name'],
-                'email' => $orgData['email'],
-                'description' => $orgData['description'],
+                'org_name' => $orgData['org_name'],
+                'org_email' => $orgData['org_email'],
+                'org_description' => $orgData['org_description'],
             ]);
 
             $event->tickets()->createMany(array_map(function ($ticket) {
@@ -90,13 +90,12 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEventRequest $reqEvent, UpdateOrganizerRequest $reqOrg, UpdateTicketRequest $reqTicket, Event $event)
+    public function update(UpdateEventRequest $reqEvent, UpdateOrganizerRequest $reqOrg, Event $event)
     {
         Gate::authorize('update', $event);
 
         $eventData = $reqEvent->validated();
         $orgData = $reqOrg->validated();
-        $ticketData = $reqTicket->validated();
 
         $uploadPath = public_path('event');
         if (!file_exists($uploadPath)) {

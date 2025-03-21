@@ -22,9 +22,9 @@ class RegisterOrganizerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email'],
-            'description' => ['nullable'],
+            'org_name' => ['required', 'string', 'max:100'],
+            'org_email' => ['required', 'email'],
+            'org_description' => ['nullable'],
         ];
     }
 }

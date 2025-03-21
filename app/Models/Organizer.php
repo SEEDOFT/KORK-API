@@ -10,9 +10,9 @@ class Organizer extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name',
-        'email',
-        'description',
+        'org_name',
+        'org_email',
+        'org_description',
         'event_id'
     ];
 
