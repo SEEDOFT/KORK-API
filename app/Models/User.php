@@ -31,7 +31,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_url',
         'location',
         'email',
-        'password'
+        'password',
+        'email_verified_at' //For implement the logic
     ];
 
     /**
@@ -40,7 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
     protected $hidden = [
-        'email_verified_at',
+        // 'email_verified_at',
         'password',
         'remember_token',
     ];

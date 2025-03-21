@@ -13,27 +13,36 @@ use App\Http\Controllers\User\PaymentMethodController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/send', [EmailVerificationController::class, 'sendVerifyCode']);
+/**
+ * Public Route for Email Verification
+ */
+Route::post('/send', [EmailVerificationController::class, 'sendVerifyCode'])
+    ->middleware('throttle:1,1');
 Route::post('/verify', [EmailVerificationController::class, 'verifySentCode']);
 
 /**
  * Public Route
  */
-Route::post('/login', [AuthenticationController::class, 'login']);
-Route::post('/register', [RegisterUserController::class, 'register']);
-Route::post('/check-email', [CheckEmailUniqueController::class, 'checkColumnUnique']);
-Route::post('/password-reset', [PasswordResetController::class, 'resetPassword']);
-Route::apiResource('/events', EventController::class)
-    ->only(['index']);
-Route::apiResource('/events.tickets', TicketController::class)
-    ->only(['index']);
-Route::apiResource('/users', UserController::class)
-    ->only(['index']);
+Route::middleware('throttle:1000,1')->group(
+    function () {
+        Route::post('/login', [AuthenticationController::class, 'login']);
+        Route::post('/register', [RegisterUserController::class, 'register']);
+        Route::post('/check-email', [CheckEmailUniqueController::class, 'checkColumnUnique']);
+        Route::post('/password-reset', [PasswordResetController::class, 'resetPassword']);
+        Route::apiResource('/events', EventController::class)
+            ->only(['index']);
+        Route::apiResource('/events.tickets', TicketController::class)
+            ->scoped()
+            ->only(['index']);
+        Route::apiResource('/users', UserController::class)
+            ->only(['index']);
+    }
+);
 
 /**
  * Protected Route
  */
-Route::middleware('auth:sanctum')->group(
+Route::middleware(['auth:sanctum', 'throttle:1000,1'])->group(
     function () {
         Route::post('/password-change', [PasswordResetController::class, '__invoke']);
         Route::post('/logout', [AuthenticationController::class, 'logout']);
@@ -41,25 +50,30 @@ Route::middleware('auth:sanctum')->group(
         Route::apiResource('/users', UserController::class)
             ->only(['show', 'update', 'destroy']);
 
-        Route::apiResource('/payment-method', PaymentMethodController::class)
-            ->only(['store', 'show', 'update', 'destroy']);
-
         Route::apiResource('/events', EventController::class)
             ->only(['store', 'update', 'destroy']);
 
         Route::apiResource('/events.tickets', TicketController::class)
+            ->scoped()
             ->only(['store', 'update', 'destroy']);
 
-        Route::apiResource('/events.attendees', TicketController::class)
-            ->only(['index']);
+        // Route::apiResource('/events.attendees', TicketController::class)
+        //     ->only(['index']);
+
+        Route::apiResource('/users.payment-methods', PaymentMethodController::class)
+            ->scoped()
+            ->only(['index', 'store', 'show', 'update', 'destroy']);
 
         Route::apiResource('/users.bookmarks', BookmarkController::class)
+            ->scoped()
             ->only(['index', 'store', 'show', 'destroy']);
 
         Route::apiResource('/users.buy-tickets', BuyTicketController::class)
+            ->scoped()
             ->only(['index', 'show']);
 
         Route::apiResource('/events.buy-tickets', BuyTicketController::class)
+            ->scoped()
             ->only(['store', 'update', 'destroy']);
     }
 );

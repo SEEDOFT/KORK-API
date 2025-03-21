@@ -13,6 +13,16 @@ class PaymentMethodController extends Controller
 {
 
     /**
+     * Display all resource
+     */
+    public function index()
+    {
+        Gate::authorize('viewAny', PaymentMethod::class);
+
+        return PaymentMethodResource::collection(PaymentMethod::get());
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(RegisterPaymentMethodRequest $request)

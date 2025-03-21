@@ -23,6 +23,7 @@ class PasswordResetController extends Controller
         if (isset($validated['current_password'])) {
             if (Hash::check($validated['current_password'], $user->password)) {
                 $user->update([
+                    'email_verified_at' => now(),
                     'password' => Hash::make($validated['password'])
                 ]);
                 return response()->json([
@@ -56,7 +57,10 @@ class PasswordResetController extends Controller
                 return response()->json(['error' => 'Code is required to reset password'], 400);
 
             } elseif (VerificationCode::verify(strval($validated['code']), $validated['email'])) {
-                $user->update(['password' => Hash::make($validated['password'])]);
+                $user->update([
+                    'email_verified_at' => now(),
+                    'password' => Hash::make($validated['password'])
+                ]);
                 return response()->json(['message' => 'Password reset successfully'], 200);
 
             }

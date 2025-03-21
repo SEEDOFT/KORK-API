@@ -50,6 +50,9 @@ class EmailVerificationController extends Controller
         }
 
         if (VerificationCode::verify(strval($validated['code']), $validated['email'])) {
+            $user->update([
+                'email_verified_at' => now(),
+            ]);
             return response()->json([
                 'message' => 'Email verified successfully.'
             ], 200);
