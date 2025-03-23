@@ -8,9 +8,9 @@ use App\Http\Requests\Event\RegisterOrganizerRequest;
 use App\Http\Requests\Event\UpdateEventRequest;
 use App\Http\Requests\Event\UpdateOrganizerRequest;
 use App\Http\Requests\Ticket\RegisterTicketRequest;
-use App\Http\Requests\Ticket\UpdateTicketRequest;
 use App\Http\Resources\Event\EventResource;
 use App\Http\Traits\CanLoadRelationships;
+use App\Http\Traits\FilterColumn;
 use App\Models\Event;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -18,13 +18,19 @@ use Illuminate\Support\Facades\Gate;
 class EventController extends Controller
 {
     use CanLoadRelationships;
+    use FilterColumn;
     private array $event_filter = ['concert', 'sport', 'fashion', 'game', 'innovation'];
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return EventResource::collection(Event::paginate());
+        $query = Event::query();
+        $filteredQuery = $this->canLoadFilter($query, 'event_type')->latest();
+
+        $events = $filteredQuery->paginate();
+
+        return EventResource::collection($events);
     }
     /**
      * Store a newly created resource in storage.

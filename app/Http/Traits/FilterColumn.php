@@ -2,22 +2,28 @@
 
 namespace App\Http\Traits;
 
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+
 trait FilterColumn
 {
-    public function includeFilters(string $filter)
+    public function includeFilters()
     {
         $filter = request()->query('filter');
         if (!$filter) {
             return false;
         }
-
-        $filters = array_map('trim', explode(',', $filter));
-
-        return in_array($filter, $filters);
+        return $filter;
     }
 
-    public function canLoadFilter(){
-
+    public function canLoadFilter(EloquentBuilder|QueryBuilder|Model $model, $column): Model|EloquentBuilder|QueryBuilder
+    {
+        $filter = $this->includeFilters();
+        if ($filter) {
+            $model->where($column, $filter)->latest();
+        }
+        return $model;
     }
 }
 
