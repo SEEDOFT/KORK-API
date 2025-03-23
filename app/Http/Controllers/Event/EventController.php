@@ -24,7 +24,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        return EventResource::collection(Event::get());
+        return EventResource::collection(Event::paginate());
     }
     /**
      * Store a newly created resource in storage.

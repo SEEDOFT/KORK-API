@@ -57,9 +57,6 @@ Route::middleware(['auth:sanctum', 'throttle:1000,1'])->group(
             ->scoped()
             ->only(['store', 'update', 'destroy']);
 
-        // Route::apiResource('/events.attendees', TicketController::class)
-        //     ->only(['index']);
-
         Route::apiResource('/users.payment-methods', PaymentMethodController::class)
             ->scoped()
             ->only(['index', 'store', 'show', 'update', 'destroy']);

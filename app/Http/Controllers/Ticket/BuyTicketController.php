@@ -23,7 +23,7 @@ class BuyTicketController extends Controller
     public function index(User $user, Event $event)
     {
 
-        $boughtTicket = $user->buyTickets()->get();
+        $boughtTicket = $user->buyTickets()->paginate();
         return AllBoughtTicketResource::collection($boughtTicket);
     }
 
@@ -67,7 +67,7 @@ class BuyTicketController extends Controller
                 }
             });
             return AllBoughtTicketResource::collection($allTickets);
-            
+
         } catch (Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()

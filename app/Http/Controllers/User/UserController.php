@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return AllUserResource::collection(User::get());
+        return AllUserResource::collection(User::paginate());
     }
     /**
      * Display the specified resource.

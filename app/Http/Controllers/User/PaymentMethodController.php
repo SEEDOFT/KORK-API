@@ -20,7 +20,7 @@ class PaymentMethodController extends Controller
     {
         Gate::authorize('viewAny', PaymentMethod::class);
 
-        return PaymentMethodResource::collection(PaymentMethod::get());
+        return PaymentMethodResource::collection(PaymentMethod::paginate());
     }
 
     /**

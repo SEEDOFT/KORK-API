@@ -16,7 +16,7 @@ class TicketController extends Controller
      */
     public function index(Event $event)
     {
-        return TicketResource::collection($event->tickets()->get());
+        return TicketResource::collection($event->tickets()->paginate());
     }
 
     /**

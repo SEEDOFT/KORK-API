@@ -15,7 +15,7 @@ class BookmarkController extends Controller
      */
     public function index(User $user)
     {
-        $bookmark = $user->bookmarks()->get();
+        $bookmark = $user->bookmarks()->paginate();
 
         return BookmarkResource::collection($bookmark);
     }
