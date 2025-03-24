@@ -26,9 +26,10 @@ class EventController extends Controller
     public function index()
     {
         $query = Event::query();
-        $filteredQuery = $this->canLoadFilter($query, 'event_type')->latest();
 
-        $events = $filteredQuery->paginate();
+        $query = $this->applyFilter($query, 'event_type');
+        $query = $this->applySearch($query, 'event_name');
+        $events = $query->latest()->paginate();
 
         return EventResource::collection($events);
     }

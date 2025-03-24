@@ -11,17 +11,29 @@ trait FilterColumn
     public function includeFilters()
     {
         $filter = request()->query('filter');
-        if (!$filter) {
-            return false;
-        }
-        return $filter;
+        return $filter ?: false;
     }
 
-    public function canLoadFilter(EloquentBuilder|QueryBuilder|Model $model, $column): Model|EloquentBuilder|QueryBuilder
+    public function includeSearch()
+    {
+        $search = request()->query('search');
+        return $search ?: false;
+    }
+
+    public function applyFilter(EloquentBuilder|QueryBuilder|Model $model, $column): Model|EloquentBuilder|QueryBuilder
     {
         $filter = $this->includeFilters();
         if ($filter) {
-            $model->where($column, $filter)->latest();
+            $model->where($column, $filter);
+        }
+        return $model;
+    }
+
+    public function applySearch(EloquentBuilder|QueryBuilder|Model $model, $column): Model|EloquentBuilder|QueryBuilder
+    {
+        $search = $this->includeSearch();
+        if ($search) {
+            $model->where($column, 'LIKE', '%' . $search . '%');
         }
         return $model;
     }
