@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Ticket\BuyTicketRequest;
 use App\Http\Resources\Ticket\AllBoughtTicketResource;
 use App\Http\Resources\Ticket\SingleBoughtTicketResource;
+use App\Models\Attendee;
 use App\Models\BuyTicket;
 use App\Models\Event;
 use App\Models\Ticket;
@@ -55,7 +56,7 @@ class BuyTicketController extends Controller
                             $ticketCode = strtoupper(Str::random(15));
                         } while (BuyTicket::where('ticket_code', $ticketCode)->exists());
 
-                        $allTickets[] = BuyTicket::create([
+                        $singleTicket = BuyTicket::create([
                             'event_id' => $event->id,
                             'ticket_id' => $ticket->id,
                             'user_id' => request()->user()->id,
@@ -63,10 +64,18 @@ class BuyTicketController extends Controller
                             'price' => $ticket->price,
                             'payment_status' => false,
                         ]);
+
+                        $allTickets[] = $singleTicket;
+
+                        Attendee::create([
+                            'event_id' => $event->id,
+                            'buy_ticket_id' => $singleTicket->id,
+                            'user_id' => request()->user()->id,
+                        ]);
                     }
                 }
             });
-            return AllBoughtTicketResource::collection($allTickets);
+            return $allTickets;
 
         } catch (Exception $e) {
             return response()->json([

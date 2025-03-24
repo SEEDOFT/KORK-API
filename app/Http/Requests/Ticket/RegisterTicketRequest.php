@@ -24,7 +24,7 @@ class RegisterTicketRequest extends FormRequest
         return [
             'tickets' => ['required', 'array', 'max:4'],
             'tickets.*.ticket_type' => ['required', 'string', 'in:vvip,vip,standard,normal', 'distinct'],
-            'tickets.*.qty' => ['required', 'integer', 'min:100'],
+            'tickets.*.qty' => ['required', 'integer', 'min:10'],
             'tickets.*.price' => ['required', 'numeric', 'min:0']
         ];
     }

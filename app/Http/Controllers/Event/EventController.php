@@ -17,37 +17,34 @@ use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
-    use CanLoadRelationships;
     use FilterColumn;
-    private array $event_filter = ['concert', 'sport', 'fashion', 'game', 'innovation'];
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $query = Event::query();
+        // $perPage = request()->query('per_page', 15);
 
-        $query = $this->applyFilter($query, 'event_type');
-        $query = $this->applySearch($query, 'event_name');
-        $query = $this->applyPriceRange($query);
-        $query = $this->applyDateRange($query, 'start_time');
+        // $query = $this->applyFilter($query, 'event_type');
+        // $query = $this->applySearch($query, 'event_name');
+        // $query = $this->applyPriceRange($query);
+        // $query = $this->applyDateRange($query, 'start_time');
 
-        $events = $query->latest()->paginate();
+        // $events = $query->paginate($perPage);
 
-        return EventResource::collection($events);
-
-        // dd($query->toSql(), $query->getBindings());
+        // return EventResource::collection($events);
+        return EventResource::collection($query->paginate());
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(RegisterEventRequest $reqEvent, RegisterOrganizerRequest $reqOrg, RegisterTicketRequest $reqTicket)
+    public function store(RegisterEventRequest $reqEvent, RegisterTicketRequest $reqTicket)
     {
         Gate::authorize('create', Event::class);
 
         $eventData = $reqEvent->validated();
-        $orgData = $reqOrg->validated();
         $ticketData = $reqTicket->validated();
 
         $uploadPath = public_path('event');
@@ -61,7 +58,7 @@ class EventController extends Controller
             $reqEvent->file('poster_url')->move($uploadPath, $imageName);
         }
 
-        $result = DB::transaction(function () use ($eventData, $orgData, $ticketData, $imageName) {
+        $result = DB::transaction(function () use ($eventData, $ticketData, $imageName) {
             $event = Event::create([
                 'event_name' => $eventData['event_name'],
                 'event_type' => $eventData['event_type'],
@@ -98,12 +95,11 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEventRequest $reqEvent, UpdateOrganizerRequest $reqOrg, Event $event)
+    public function update(UpdateEventRequest $reqEvent, Event $event)
     {
         Gate::authorize('update', $event);
 
         $eventData = $reqEvent->validated();
-        $orgData = $reqOrg->validated();
 
         $uploadPath = public_path('event');
         if (!file_exists($uploadPath)) {
@@ -122,7 +118,6 @@ class EventController extends Controller
         }
 
         $event->update($eventData);
-        $event->organizer()->update($orgData);
 
         return EventResource::make($event);
     }

@@ -45,6 +45,18 @@ class RegisterUserController extends Controller
 
 
         $token = $user->createToken('api-token')->plainTextToken;
-        return RegisterUserResource::make($user, $token);
+        return response()->json([
+            'id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'dob' => $user->dob,
+            'email' => $user->email,
+            'phone_number' => $user->phone_number,
+            'nationality' => $user->nationality,
+            'gender' => $user->gender,
+            'profile_url' => $user->profile_url,
+            'location' => $user->location,
+            'token' => $token
+        ]);
     }
 }

@@ -36,7 +36,10 @@ class AuthenticationController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        return LoginResource::make($user, $token);
+        return response()->json([
+            'id' => $user->id,
+            'token' => $token
+        ], 200);
 
     }
 

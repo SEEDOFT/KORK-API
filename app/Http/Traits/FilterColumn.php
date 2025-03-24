@@ -27,13 +27,17 @@ trait FilterColumn
         if (!$price) {
             return false;
         }
-        $allPrice = array_map('trim', explode(',', $price));
 
-        $filteredPrice = array_filter($allPrice, 'is_numeric');
+        $allPrice = array_map('trim', explode(',', $price));
+        $filteredPrice = array_filter($allPrice, function ($value) {
+            return is_numeric($value);
+        });
 
         if (empty($filteredPrice)) {
             return false;
         }
+
+        $filteredPrice = array_map('floatval', $filteredPrice);
 
         return [
             'min' => min($filteredPrice),
@@ -41,7 +45,8 @@ trait FilterColumn
         ];
     }
 
-    public function includeDateRange()
+
+    public function includeDateRange(): string
     {
         $date = request()->query('date');
         return $date ?: false;
@@ -69,15 +74,17 @@ trait FilterColumn
     {
         $priceRange = $this->includePriceRange();
 
-        if ($priceRange) {
-            $model->whereHas('tickets', function ($query) use ($priceRange) {
-                $query->whereBetween('price', [$priceRange['min'], $priceRange['max']]);
+        if ($priceRange && isset($priceRange['min'], $priceRange['max'])) {
+            return $model->whereHas('tickets', function ($query) use ($priceRange) {
+                $query->whereBetween('price', [
+                    (float) $priceRange['min'],
+                    (float) $priceRange['max'],
+                ]);
             });
         }
 
         return $model;
     }
-
 
     public function applyDateRange(EloquentBuilder|QueryBuilder|Model $model, string $column): Model|EloquentBuilder|QueryBuilder
     {
@@ -93,14 +100,15 @@ trait FilterColumn
         $endOfWeek = Carbon::now()->endOfWeek();
 
         if ($date === 'today') {
-            return $model->whereDate($column, '=', $today);
+            return $model->whereDate($column, '>=', $today);
         } elseif ($date === 'tomorrow') {
-            return $model->whereDate($column, '=', $tomorrow);
+            return $model->whereDate($column, '<=', $tomorrow);
         } elseif ($date === 'this_week') {
             return $model->whereBetween($column, [$startOfWeek, $endOfWeek]);
         }
 
         return $model;
     }
+
 }
 
