@@ -23,10 +23,10 @@ class Event extends Model
         'end_time'
     ];
 
-    public function organizer(): HasOne
-    {
-        return $this->HasOne(Organizer::class);
-    }
+    // public function organizer(): HasOne
+    // {
+    //     return $this->HasOne(Organizer::class);
+    // }
 
     public function user(): BelongsTo
     {

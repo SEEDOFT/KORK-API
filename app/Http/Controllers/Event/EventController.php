@@ -29,10 +29,16 @@ class EventController extends Controller
 
         $query = $this->applyFilter($query, 'event_type');
         $query = $this->applySearch($query, 'event_name');
+        $query = $this->applyPriceRange($query);
+        $query = $this->applyDateRange($query, 'start_time');
+
         $events = $query->latest()->paginate();
 
         return EventResource::collection($events);
+
+        // dd($query->toSql(), $query->getBindings());
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -65,11 +71,6 @@ class EventController extends Controller
                 'start_time' => $eventData['start_date'] . ' ' . $eventData['start_time'],
                 'end_time' => $eventData['end_date'] . ' ' . $eventData['end_time'],
                 'user_id' => request()->user()->id,
-            ]);
-            $event->organizer()->create([
-                'org_name' => $orgData['org_name'],
-                'org_email' => $orgData['org_email'],
-                'org_description' => $orgData['org_description'],
             ]);
 
             $event->tickets()->createMany(array_map(function ($ticket) {

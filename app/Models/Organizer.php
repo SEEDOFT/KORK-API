@@ -20,8 +20,8 @@ class Organizer extends Model
         'event_id' => 'integer'
     ];
 
-    public function event(): BelongsTo
-    {
-        return $this->belongsTo(Event::class);
-    }
+    // public function event(): BelongsTo
+    // {
+    //     return $this->belongsTo(Event::class);
+    // }
 }

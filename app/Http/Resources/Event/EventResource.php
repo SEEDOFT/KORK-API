@@ -27,7 +27,6 @@ class EventResource extends JsonResource
             'end_date' => date('Y-m-d', strtotime($this->end_time)),
             'start_time' => date('H:i:s', strtotime($this->start_time)),
             'end_time' => date('H:i:s', strtotime($this->end_time)),
-            'organizer' => OrganizerResource::make($this->organizer),
             'user' => AllUserResource::make($this->user),
             'tickets' => TicketResource::collection($this->tickets),
         ];
