@@ -21,35 +21,29 @@ trait FilterColumn
         return $search ?: false;
     }
 
-    public function includePriceRange()
+    public function includeMinPrice()
     {
-        $price = request()->query('price');
-        if (!$price) {
+        $minPrice = request()->query('min_price');
+        if (!$minPrice) {
             return false;
         }
+        return $minPrice;
+    }
 
-        $allPrice = array_map('trim', explode(',', $price));
-        $filteredPrice = array_filter($allPrice, function ($value) {
-            return is_numeric($value);
-        });
-
-        if (empty($filteredPrice)) {
+    public function includeMaxPrice()
+    {
+        $maxPrice = request()->query('max_price');
+        if (!$maxPrice) {
             return false;
         }
-
-        $filteredPrice = array_map('floatval', $filteredPrice);
-
-        return [
-            'min' => min($filteredPrice),
-            'max' => max($filteredPrice),
-        ];
+        return $maxPrice;
     }
 
 
-    public function includeDateRange(): string
+    public function includeDateRange(): ?string
     {
         $date = request()->query('date');
-        return $date ?: false;
+        return $date ?: null;
     }
 
     public function applyFilter(EloquentBuilder|QueryBuilder|Model $model, $column): Model|EloquentBuilder|QueryBuilder
@@ -70,21 +64,22 @@ trait FilterColumn
         return $model;
     }
 
-    public function applyPriceRange(EloquentBuilder|QueryBuilder|Model $model): Model|EloquentBuilder|QueryBuilder
+    public function applyPriceRange(EloquentBuilder|QueryBuilder|Model $model, $relationship = null, $column = null): Model|EloquentBuilder|QueryBuilder
     {
-        $priceRange = $this->includePriceRange();
+        $min = $this->includeMinPrice();
+        $max = $this->includeMaxPrice();
 
-        if ($priceRange && isset($priceRange['min'], $priceRange['max'])) {
-            return $model->whereHas('tickets', function ($query) use ($priceRange) {
-                $query->whereBetween('price', [
-                    (float) $priceRange['min'],
-                    (float) $priceRange['max'],
+        if (($min || $max) && isset($min, $max)) {
+            return $model->whereHas($relationship, function ($query) use ($min, $max, $column) {
+                $query->whereBetween($column, [
+                    (float) $min,
+                    (float) $max,
                 ]);
             });
         }
-
         return $model;
     }
+
 
     public function applyDateRange(EloquentBuilder|QueryBuilder|Model $model, string $column): Model|EloquentBuilder|QueryBuilder
     {
@@ -100,14 +95,14 @@ trait FilterColumn
         $endOfWeek = Carbon::now()->endOfWeek();
 
         if ($date === 'today') {
-            return $model->whereDate($column, '>=', $today);
+            return $model->whereDate($column, '=', $today);
         } elseif ($date === 'tomorrow') {
-            return $model->whereDate($column, '<=', $tomorrow);
+            return $model->whereDate($column, '=', $tomorrow);
         } elseif ($date === 'this_week') {
             return $model->whereBetween($column, [$startOfWeek, $endOfWeek]);
+        } else {
+            return $model->whereDate($column, '=', $date);
         }
-
-        return $model;
     }
 
 }

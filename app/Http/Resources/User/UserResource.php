@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'gender' => $this->gender,
             'profile_url' => asset('user/' . $this->profile_url),
             'location' => $this->location,
-            'payment_methods' => PaymentMethodResource::collection($this->payment_methods),
+            'payment_methods' => PaymentMethodResource::collection($this->paymentMethods),
         ];
     }
 }

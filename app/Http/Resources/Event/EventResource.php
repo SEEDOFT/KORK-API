@@ -16,6 +16,16 @@ class EventResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $attendeesData = $this->attendees->groupBy('user_id')->map(function ($attendees) {
+            $user = $attendees->first()->user;
+            return [
+                'user_id' => $attendees->first()->user_id,
+                'profile_url' => asset('user/' . $user->profile_url),
+                'qty' => $attendees->count(),
+            ];
+        });
+        $attendeesArray = $attendeesData->values()->toArray();
+
         return [
             'id' => $this->id,
             'event_name' => $this->event_name,
@@ -28,7 +38,7 @@ class EventResource extends JsonResource
             'start_time' => date('H:i:s', strtotime($this->start_time)),
             'end_time' => date('H:i:s', strtotime($this->end_time)),
             'user' => AllUserResource::make($this->user),
-            'attendees' => AttendeeResource::collection($this->attendees),
+            'attendees' => $attendeesArray,
             'tickets' => TicketResource::collection($this->tickets),
         ];
     }

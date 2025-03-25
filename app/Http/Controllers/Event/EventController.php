@@ -4,12 +4,9 @@ namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\RegisterEventRequest;
-use App\Http\Requests\Event\RegisterOrganizerRequest;
 use App\Http\Requests\Event\UpdateEventRequest;
-use App\Http\Requests\Event\UpdateOrganizerRequest;
 use App\Http\Requests\Ticket\RegisterTicketRequest;
 use App\Http\Resources\Event\EventResource;
-use App\Http\Traits\CanLoadRelationships;
 use App\Http\Traits\FilterColumn;
 use App\Models\Event;
 use Illuminate\Support\Facades\DB;
@@ -24,17 +21,16 @@ class EventController extends Controller
     public function index()
     {
         $query = Event::query();
-        // $perPage = request()->query('per_page', 15);
+        $perPage = request()->query('per_page', 15);
 
-        // $query = $this->applyFilter($query, 'event_type');
-        // $query = $this->applySearch($query, 'event_name');
-        // $query = $this->applyPriceRange($query);
-        // $query = $this->applyDateRange($query, 'start_time');
+        $query = $this->applyFilter($query, 'event_type');
+        $query = $this->applySearch($query, 'event_name');
+        $query = $this->applyPriceRange($query, 'tickets', 'price');
+        $query = $this->applyDateRange($query, 'start_time');
 
-        // $events = $query->paginate($perPage);
+        $events = $query->paginate($perPage);
 
-        // return EventResource::collection($events);
-        return EventResource::collection($query->paginate());
+        return EventResource::collection($events);
     }
 
     /**

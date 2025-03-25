@@ -15,9 +15,6 @@ class AttendeeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'user_id' => $this->user_id,
-            'qty' => count($this->user_id),
-        ];
+        return parent::toArray($request);
     }
 }
