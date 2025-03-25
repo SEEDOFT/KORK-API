@@ -81,7 +81,7 @@ trait FilterColumn
     }
 
 
-    public function applyDateRange(EloquentBuilder|QueryBuilder|Model $model, string $column): Model|EloquentBuilder|QueryBuilder
+    public function applyDateRange(EloquentBuilder|QueryBuilder|Model $model, string $column)
     {
         $date = $this->includeDateRange();
 
