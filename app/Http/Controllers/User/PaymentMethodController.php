@@ -19,8 +19,9 @@ class PaymentMethodController extends Controller
     public function index()
     {
         Gate::authorize('viewAny', PaymentMethod::class);
+        $perPage = request()->query('per_page', 15);
 
-        return PaymentMethodResource::collection(PaymentMethod::paginate());
+        return PaymentMethodResource::collection(PaymentMethod::paginate($perPage));
     }
 
     /**

@@ -16,7 +16,8 @@ class TicketController extends Controller
      */
     public function index(Event $event)
     {
-        return TicketResource::collection($event->tickets()->paginate());
+        $perPage = request()->query('per_page', 15);
+        return TicketResource::collection($event->tickets()->paginate($perPage));
     }
 
     /**

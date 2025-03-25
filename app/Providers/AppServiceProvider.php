@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Http\Resources\Ticket\TicketResource;
+use App\Http\Resources\User\BookmarkResource;
+use App\Http\Resources\User\UserResource;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        UserResource::withoutWrapping();
     }
 }
