@@ -14,6 +14,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class BuyTicketController extends Controller
@@ -33,6 +34,7 @@ class BuyTicketController extends Controller
      */
     public function store(BuyTicketRequest $request, Event $event)
     {
+
         $ticketsData = $request->validated()['tickets'];
         $allTickets = [];
 

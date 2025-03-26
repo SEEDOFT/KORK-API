@@ -7,6 +7,8 @@ use App\Http\Resources\User\BookmarkResource;
 use App\Models\Bookmark;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class BookmarkController extends Controller
 {
@@ -15,6 +17,12 @@ class BookmarkController extends Controller
      */
     public function index(User $user)
     {
+        if ($user->id !== auth()->user()->id) {
+            return response()->json(['error' => 'You can only view your own bookmarks.'], 403);
+        }
+
+        Gate::authorize('viewAny', $user);
+
         $perPage = request()->query('per_page', 15);
         $bookmark = $user->bookmarks()->paginate($perPage);
 
@@ -24,25 +32,41 @@ class BookmarkController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
-        $eventId = $request->validate([
-            'event_id' => ['required', 'unique:bookmarks,event_id', 'exists:events,id']
+        if ($request->user()->id !== $user->id) {
+            return response()->json(['error' => 'Unauthorized action.'], 403);
+        }
+
+        Gate::authorize('create', [Bookmark::class, $user]);
+
+        $validated = $request->validate([
+            'event_id' => [
+                'required',
+                Rule::unique('bookmarks')->where(fn($query) => $query->where('user_id', $user->id)),
+                'exists:events,id'
+            ],
         ]);
 
         $bookmark = Bookmark::create([
-            'event_id' => $eventId['event_id'],
-            'user_id' => request()->user()->id,
+            'event_id' => $validated['event_id'],
+            'user_id' => $user->id,
         ]);
 
         return BookmarkResource::make($bookmark);
     }
+
 
     /**
      * Display the specified resource.
      */
     public function show(User $user, Bookmark $bookmark)
     {
+        if ($user->id !== auth()->user()->id) {
+            return response()->json(['error' => 'You can only view your own bookmarks.'], 403);
+        }
+        Gate::authorize('view', $bookmark);
+
         return BookmarkResource::make($bookmark);
     }
 
@@ -51,6 +75,8 @@ class BookmarkController extends Controller
      */
     public function destroy(User $user, Bookmark $bookmark)
     {
+        Gate::authorize('delete', $user);
+
         $bookmark->delete();
 
         return response()->json([

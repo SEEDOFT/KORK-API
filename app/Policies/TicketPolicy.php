@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -27,17 +28,18 @@ class TicketPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, Event $event): bool
     {
-        return true;
+        return $user->id === $event->user_id;
     }
 
     /**
      * Determine whether the user can update the model.
      */
+
     public function update(User $user, Ticket $ticket): bool
     {
-        return $user->events()->where('id', $ticket->event_id)->exists();
+        return $user->id === $ticket->event->user_id;
     }
 
     /**
@@ -45,9 +47,8 @@ class TicketPolicy
      */
     public function delete(User $user, Ticket $ticket): bool
     {
-        return $user->events()->where('id', $ticket->event_id)->exists();
+        return $user->id === $ticket->event->user_id;
     }
-
     /**
      * Determine whether the user can restore the model.
      */

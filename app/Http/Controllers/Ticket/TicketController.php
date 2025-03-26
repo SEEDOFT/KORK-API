@@ -8,6 +8,7 @@ use App\Http\Requests\Ticket\UpdateTicketRequest;
 use App\Http\Resources\Ticket\TicketResource;
 use App\Models\Event;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Gate;
 
 class TicketController extends Controller
 {
@@ -23,19 +24,35 @@ class TicketController extends Controller
     /**
      * Store single ticket
      */
-    public function store(RegisterSingleTicketType $reqTicket, Event $event, Ticket $ticket)
+    public function store(RegisterSingleTicketType $reqTicket, Event $event)
     {
+        if (auth()->id() !== $event->user_id) {
+            return response()->json(['error' => 'Unauthorized: You are not the owner of this event.'], 403);
+        }
+
+        Gate::authorize('create', [$event]);
+
         $data = $reqTicket->validated();
-        $tk = $ticket->create([
+        $existingTypes = Ticket::where('event_id', $event->id)->pluck('ticket_type')->toArray();
+
+        if (count($existingTypes) >= 4) {
+            return response()->json(['error' => 'This event already has all 4 ticket types. No more can be added.'], 400);
+        }
+
+        if (in_array($data['ticket_type'], $existingTypes)) {
+            return response()->json(['error' => "The ticket type '{$data['ticket_type']}' already exists for this event."], 400);
+        }
+
+        $ticket = Ticket::create([
             'event_id' => $event->id,
             'ticket_type' => $data['ticket_type'],
-            'qty' => $ticket->qty + $data['qty'],
+            'qty' => $data['qty'],
             'available_qty' => $data['qty'],
             'sold_qty' => 0,
             'price' => $data['price'],
         ]);
 
-        return TicketResource::make($tk);
+        return TicketResource::make($ticket);
     }
 
     /**
@@ -43,19 +60,31 @@ class TicketController extends Controller
      */
     public function update(UpdateTicketRequest $reqTicket, Event $event, Ticket $ticket)
     {
+        if (auth()->id() !== $event->user_id) {
+            return response()->json(['error' => 'Unauthorized: You are not the owner of this event.'], 403);
+        }
+
+        Gate::authorize('update', $ticket);
+
         $data = $reqTicket->validated();
-        $updateData = $data;
+        $updateData = [];
 
         if (isset($data['qty'])) {
-            if ($data['qty'] > $ticket->sold_qty && $data['qty'] > $ticket->qty) {
+            if ($data['qty'] < $ticket->sold_qty) {
+                return response()->json(['error' => "New quantity cannot be lower than the number of sold tickets."], 400);
+            }
+
+            if ($data['qty'] > $ticket->qty) {
                 $updateData['available_qty'] = $ticket->available_qty + ($data['qty'] - $ticket->qty);
-            } elseif ($data['qty'] < $ticket->qty && $data['qty'] >= $ticket->sold_qty) {
+            } else {
                 $updateData['available_qty'] = max(0, $ticket->available_qty - ($ticket->qty - $data['qty']));
-            } elseif ($data['qty'] < $ticket->sold_qty) {
-                return response()->json(['error' => "New quantity cannot be lower than sold tickets"], 400);
             }
 
             $updateData['qty'] = $data['qty'];
+        }
+
+        if (isset($data['price'])) {
+            $updateData['price'] = $data['price'];
         }
 
         $ticket->update($updateData);
@@ -69,10 +98,14 @@ class TicketController extends Controller
      */
     public function destroy(Event $event, Ticket $ticket)
     {
+        if (auth()->id() !== $event->user_id) {
+            return response()->json(['error' => 'Unauthorized: You are not the owner of this event.'], 403);
+        }
+
+        Gate::authorize('delete', $ticket);
+
         $ticket->delete();
 
-        return response()->json([
-            'message' => 'Ticket has been deleted successfully.'
-        ], 204);
+        return response()->json(['message' => 'Ticket deleted successfully.'], 200);
     }
 }
