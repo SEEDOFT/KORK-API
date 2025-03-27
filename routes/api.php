@@ -63,7 +63,8 @@ Route::middleware(['auth:sanctum', 'throttle:1000,1'])->group(
 
         Route::apiResource('/users.bookmarks', BookmarkController::class)
             ->scoped()
-            ->only(['index', 'store', 'show', 'destroy']);
+            ->only(['index', 'store', 'show']);
+        Route::delete('/users/{user}/bookmarks/{event_id}', [BookmarkController::class, 'destroy']);
 
         Route::apiResource('/users.buy-tickets', BuyTicketController::class)
             ->scoped()

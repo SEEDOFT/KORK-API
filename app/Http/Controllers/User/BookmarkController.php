@@ -73,9 +73,17 @@ class BookmarkController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user, Bookmark $bookmark)
+    public function destroy(User $user, $event_id)
     {
         Gate::authorize('delete', $user);
+
+        $bookmark = Bookmark::where('event_id', $event_id)->first();
+
+        if (!$bookmark) {
+            return response()->json([
+                'message' => 'Bookmark not found.'
+            ], 404);
+        }
 
         $bookmark->delete();
 
@@ -83,4 +91,5 @@ class BookmarkController extends Controller
             'message' => 'Bookmark deleted successfully.'
         ], 204);
     }
+
 }
