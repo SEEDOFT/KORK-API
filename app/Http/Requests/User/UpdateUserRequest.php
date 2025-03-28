@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'first_name' => ['sometimes', 'string', 'max:255'],
             'last_name' => ['sometimes', 'string', 'max:255'],
-            'gender' => ['sometimes', 'in:male,female,others'],
+            'gender' => ['sometimes'],
             'dob' => ['sometimes', 'date'],
             'nationality' => ['sometimes', 'string', 'max:255'],
             'profile_url' => ['sometimes', 'image'],
