@@ -22,7 +22,7 @@ class RegisterEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_name' => ['required', 'string'],
+            'event_name' => ['required'],
             'event_type' => ['required', 'string', 'in:fashion,innovation,concert,sport,game', 'max:20'],
             'description' => ['nullable'],
             'location' => ['required', 'string'],

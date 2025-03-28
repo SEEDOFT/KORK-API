@@ -22,7 +22,7 @@ class UpdateEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_name' => ['sometimes', 'string', 'max:150'],
+            'event_name' => ['sometimes'],
             'event_type' => ['sometimes', 'string', 'in:fashion, innovation, concert, sport, game', 'max:20'],
             'description' => ['sometimes'],
             'location' => ['sometimes', 'string'],
