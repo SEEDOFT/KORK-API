@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
  * Public Route for Email Verification
  */
 Route::post('/send', [EmailVerificationController::class, 'sendVerifyCode'])
-    ->middleware('throttle:1,1');
+    ->middleware('throttle:10,1');
 Route::post('/verify', [EmailVerificationController::class, 'verifySentCode']);
 
 /**

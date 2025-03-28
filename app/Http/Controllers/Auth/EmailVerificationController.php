@@ -15,15 +15,9 @@ class EmailVerificationController extends Controller
             'email' => 'required|email'
         ]);
 
-        $user = User::where('email', $validated['email'])->first();
+        $result = VerificationCode::send($validated['email']);
 
-        if (!$user) {
-            return response()->json([
-                'error' => 'User not found',
-            ], 404);
-        }
-
-        if (VerificationCode::send($validated['email'])) {
+        if ($result === false) {
             return response()->json([
                 'error' => 'Cannot send the verification code.'
             ], 400);
@@ -33,7 +27,6 @@ class EmailVerificationController extends Controller
             ], 200);
         }
     }
-
     public function verifySentCode(Request $request)
     {
         $validated = $request->validate([
@@ -41,18 +34,7 @@ class EmailVerificationController extends Controller
             'code' => 'required'
         ]);
 
-        $user = User::where('email', $validated['email'])->first();
-
-        if (!$user) {
-            return response()->json([
-                'error' => 'User not found',
-            ], 404);
-        }
-
         if (VerificationCode::verify(strval($validated['code']), $validated['email'])) {
-            $user->update([
-                'email_verified_at' => now(),
-            ]);
             return response()->json([
                 'message' => 'Email verified successfully.'
             ], 200);

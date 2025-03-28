@@ -35,13 +35,12 @@ class EmailVerification extends Notification implements VerificationCodeCreatedI
      */
     public function toMail(): MailMessage
     {
-        return (new MailMessage())
-            ->from('korkapp.team@gmail.com')
+        return (new MailMessage)
+            ->from('korkapp.team@gmail.com', 'Kork App Team')
             ->subject('Your verification code')
             ->greeting('Hello!')
             ->line('Your verification code: ' . $this->code)
             ->salutation("Best regards,\n\nKork App");
-
     }
 
     /**
