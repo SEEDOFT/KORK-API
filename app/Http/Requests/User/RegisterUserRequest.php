@@ -25,7 +25,7 @@ class RegisterUserRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'gender' => ['required', 'in:male,female,others'],
+            'gender' => ['required'],
             'dob' => ['required', 'date'],
             'nationality' => ['nullable', 'string', 'max:50'],
             'profile_url' => ['required', 'image', 'mimes:png,jpg,gif,jpeg', 'max:4096'],

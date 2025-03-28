@@ -7,6 +7,7 @@
 /public/user
 /storage/*.key
 /storage/pail
+/storage/firebase
 /vendor
 .env
 .env.backup
