@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Event\EventResource;
 use App\Http\Resources\User\BookmarkResource;
 use App\Models\Bookmark;
+use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -24,9 +26,10 @@ class BookmarkController extends Controller
         Gate::authorize('viewAny', $user);
 
         $perPage = request()->query('per_page', 15);
-        $bookmark = $user->bookmarks()->paginate($perPage);
 
-        return BookmarkResource::collection($bookmark);
+        $events = Event::whereIn('id', $user->bookmarks()->pluck('event_id'));
+
+        return EventResource::collection($events->paginate($perPage));
     }
 
     /**
