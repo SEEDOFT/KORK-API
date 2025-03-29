@@ -23,12 +23,12 @@ class UpdateEventRequest extends FormRequest
     {
         return [
             'event_name' => ['sometimes'],
-            'event_type' => ['sometimes', 'string', 'in:fashion, innovation, concert, sport, game', 'max:20'],
+            'event_type' => ['sometimes', 'max:20'],
             'description' => ['sometimes'],
             'location' => ['sometimes', 'string'],
             'poster_url' => ['sometimes', 'image'],
             'start_time' => ['sometimes', 'date'],
-            'end_time' => ['sometimes', 'date', 'after:start_time'],
+            'end_time' => ['sometimes', 'date'],
         ];
     }
 }
