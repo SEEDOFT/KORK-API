@@ -25,11 +25,23 @@ class EventResource extends JsonResource
             ];
         });
         $attendeesArray = $attendeesData->values()->toArray();
+        $eventTypes = [
+            "តន្ត្រី" => ["តន្ត្រី", "concert"],
+            "concert" => ["តន្ត្រី", "concert"],
+            "ហ្គេម" => ["ហ្គេម", "game"],
+            "game" => ["ហ្គេម", "game"],
+            "ម៉ូដ" => ["ម៉ូដ", "fashion"],
+            "fashion" => ["ម៉ូដ", "fashion"],
+            "កីឡា" => ["កីឡា", "sport"],
+            "sport" => ["កីឡា", "sport"],
+            "ការច្នៃប្រឌិត" => ["ការច្នៃប្រឌិត", "innovation"],
+            "innovation" => ["ការច្នៃប្រឌិត", "innovation"],
+        ];
 
         return [
             'id' => $this->id,
             'event_name' => $this->event_name,
-            'event_type' => $this->event_type,
+            'event_type' => $eventTypes[$this->event_type] ?? [$this->event_type],
             'description' => $this->description,
             'location' => $this->location,
             'poster_url' => asset('event/' . $this->poster_url),
@@ -42,4 +54,5 @@ class EventResource extends JsonResource
             'tickets' => TicketResource::collection($this->tickets),
         ];
     }
+
 }
