@@ -49,6 +49,10 @@ class BuyTicketController extends Controller
                         throw new Exception("Insufficient quantity");
                     }
 
+                    if ($ticketData['payment_status'] == false) {
+                        throw new Exception("Must be paying first to get your ticket");
+                    }
+
                     $ticket->available_qty -= $requestedQty;
                     $ticket->sold_qty += $requestedQty;
                     $ticket->save();
