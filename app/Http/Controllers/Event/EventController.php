@@ -42,6 +42,7 @@ class EventController extends Controller
 
         $eventData = $reqEvent->validated();
         $ticketData = $reqTicket->validated();
+        $event_type = '';
 
         $uploadPath = public_path('event');
 
@@ -54,10 +55,23 @@ class EventController extends Controller
             $reqEvent->file('poster_url')->move($uploadPath, $imageName);
         }
 
-        $result = DB::transaction(function () use ($eventData, $ticketData, $imageName) {
+
+        if ($eventData['event_type'] == "តន្ត្រី") {
+            $event_type = 'concert';
+        } elseif ($eventData['event_type'] == "ហ្គេម") {
+            $event_type = 'game';
+        } elseif ($eventData['event_type'] == "ម៉ូដ") {
+            $event_type = 'cofashionncert';
+        } elseif ($eventData['event_type'] == "កីឡា") {
+            $event_type = 'sport';
+        } elseif ($eventData['event_type'] == "ការច្នៃប្រឌិត") {
+            $event_type = 'innovation';
+        }
+
+        $result = DB::transaction(function () use ($eventData, $ticketData, $imageName, $event_type) {
             $event = Event::create([
                 'event_name' => $eventData['event_name'],
-                'event_type' => $eventData['event_type'],
+                'event_type' => $event_type,
                 'description' => $eventData['description'],
                 'location' => $eventData['location'],
                 'poster_url' => $imageName,

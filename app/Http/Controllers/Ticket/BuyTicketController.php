@@ -24,9 +24,8 @@ class BuyTicketController extends Controller
      */
     public function index(User $user, Event $event)
     {
-
-        $boughtTicket = $user->buyTickets()->paginate();
-        return AllBoughtTicketResource::collection($boughtTicket);
+        $perPage = request()->query('per_page', 15);
+        return AllBoughtTicketResource::collection($user->buyTickets()->paginate($perPage));
     }
 
     /**
