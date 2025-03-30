@@ -64,7 +64,7 @@ class BuyTicketController extends Controller
                             'user_id' => request()->user()->id,
                             'ticket_code' => $ticketCode,
                             'price' => $ticket->price,
-                            'payment_status' => false,
+                            'payment_status' => $ticketData['payment_status'],
                         ]);
 
                         $allTickets[] = $singleTicket;

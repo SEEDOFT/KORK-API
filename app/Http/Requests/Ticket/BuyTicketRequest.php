@@ -25,6 +25,7 @@ class BuyTicketRequest extends FormRequest
             'tickets' => ['required', 'array', 'max:4'],
             'tickets.*.ticket_id' => ['required', 'integer'],
             'tickets.*.qty' => ['required', 'integer'],
+            'tickets.*.payment_status' => ['required', 'boolean']
         ];
     }
 }
