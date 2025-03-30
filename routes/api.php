@@ -9,6 +9,7 @@ use App\Http\Controllers\Event\EventController;
 use App\Http\Controllers\Ticket\BuyTicketController;
 use App\Http\Controllers\Ticket\TicketController;
 use App\Http\Controllers\User\BookmarkController;
+use App\Http\Controllers\User\CheckPaymentMethodUniqueController;
 use App\Http\Controllers\User\PaymentMethodController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +61,7 @@ Route::middleware(['auth:sanctum', 'throttle:1000,1'])->group(
         Route::apiResource('/users.payment-methods', PaymentMethodController::class)
             ->scoped()
             ->only(['index', 'store', 'show', 'update', 'destroy']);
+        Route::post('/check-card', [CheckPaymentMethodUniqueController::class, 'checkCreditCardNumberUnique']);
 
         Route::apiResource('/users.bookmarks', BookmarkController::class)
             ->scoped()

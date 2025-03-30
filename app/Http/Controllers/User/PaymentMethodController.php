@@ -38,6 +38,7 @@ class PaymentMethodController extends Controller
     public function store(RegisterPaymentMethodRequest $request, User $user)
     {
         $authUser = auth()->user();
+        $userId = auth()->id();
 
         if ($authUser->id !== $user->id) {
             return response()->json(['error' => 'Unauthorized: You can only add a payment method for your own account.'], 403);
@@ -47,15 +48,24 @@ class PaymentMethodController extends Controller
 
         $data = $request->validated();
 
-        $payment = PaymentMethod::create([
-            'user_id' => $user->id,
-            'card_number' => $data['card_number'],
-            'card_holder_name' => $data['card_holder_name'],
-            'expired_date' => $data['expired_date'],
-            'cvv' => $data['cvv']
-        ]);
+        $exists = PaymentMethod::where('card_number', $data['card_number'])
+            ->where('user_id', $userId)
+            ->exists();
 
-        return PaymentMethodResource::make($payment);
+        if (!$exists) {
+            $payment = PaymentMethod::create([
+                'user_id' => $user->id,
+                'card_number' => $data['card_number'],
+                'card_holder_name' => $data['card_holder_name'],
+                'expired_date' => $data['expired_date'],
+                'cvv' => $data['cvv']
+            ]);
+
+            return PaymentMethodResource::make($payment);
+        }
+        return response()->json([
+            'error' => 'Card number already exists'
+        ], 409);
     }
 
     /**
