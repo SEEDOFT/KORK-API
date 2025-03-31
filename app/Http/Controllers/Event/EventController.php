@@ -66,6 +66,8 @@ class EventController extends Controller
             $event_type = 'sport';
         } elseif ($eventData['event_type'] == "ការច្នៃប្រឌិត") {
             $event_type = 'innovation';
+        } else {
+            $event_type = $eventData['event_type'];
         }
 
         $result = DB::transaction(function () use ($eventData, $ticketData, $imageName, $event_type) {
