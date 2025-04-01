@@ -19,7 +19,9 @@ class EventResource extends JsonResource
         $attendeesData = $this->attendees->groupBy('user_id')->map(function ($attendees) {
             $user = $attendees->first()->user;
             return [
-                'user_id' => $attendees->first()->user_id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
                 'profile_url' => asset('user/' . $user->profile_url),
                 'qty' => $attendees->count(),
             ];
