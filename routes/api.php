@@ -58,6 +58,8 @@ Route::middleware(['auth:sanctum', 'throttle:1000,1'])->group(
             ->scoped()
             ->only(['store', 'update', 'destroy']);
 
+        Route::get('/users/{user}/events', [UserController::class, 'allEvents']);
+
         Route::apiResource('/users.payment-methods', PaymentMethodController::class)
             ->scoped()
             ->only(['index', 'store', 'show', 'update', 'destroy']);

@@ -4,14 +4,17 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\Event\EventResource;
 use App\Http\Resources\User\AllUserResource;
 use App\Http\Resources\User\UserResource;
+use App\Http\Traits\FilterColumn;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
 
+    use FilterColumn;
     /**
      * Display all user
      */
@@ -24,6 +27,10 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        if ($user->id !== auth()->user()->id) {
+            return response()->json(['error' => 'You can only view your own information.'], 403);
+        }
+
         Gate::authorize('view', $user);
 
         return UserResource::make($user);
@@ -34,6 +41,10 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $updateRequest, User $user)
     {
+        if ($user->id !== auth()->user()->id) {
+            return response()->json(['error' => 'You can only update your own information.'], 403);
+        }
+
 
         Gate::authorize('update', $user);
 
@@ -65,6 +76,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if ($user->id !== auth()->user()->id) {
+            return response()->json(['error' => 'You can only delete your own information.'], 403);
+        }
+
         Gate::authorize('delete', $user);
 
         $imagePath = public_path('user/' . $user->profile_url);
@@ -78,5 +93,27 @@ class UserController extends Controller
         return response()->json([
             'message' => 'User has been deleted successfully.'
         ], 204);
+    }
+
+    /**
+     * Display all user added events
+     */
+    public function allEvents(User $user)
+    {
+        if ($user->id !== auth()->user()->id) {
+            return response()->json(['error' => 'You can only view your own information.'], 403);
+        }
+
+        Gate::authorize('viewAny', $user);
+        $perPage = request()->query('per_page', 15);
+        $allEvents = $user->events()->getQuery();
+
+        $allEvents = $this->applyFilter($allEvents, 'event_type');
+        $allEvents = $this->applySearch($allEvents, 'event_name');
+        $allEvents = $this->applyPriceRange($allEvents, 'tickets', 'price');
+        $allEvents = $this->applyDateRange($allEvents, 'start_time');
+
+
+        return EventResource::collection($allEvents->paginate($perPage));
     }
 }

@@ -12,7 +12,21 @@ trait FilterColumn
     public function includeFilters()
     {
         $filter = request()->query('filter');
-        return $filter ?: false;
+        $filterType = '';
+        if ($filter == "តន្ត្រី") {
+            $filterType = 'concert';
+        } elseif ($filter == "ហ្គេម") {
+            $filterType = 'game';
+        } elseif ($filter == "ម៉ូដ") {
+            $filterType = 'cofashionncert';
+        } elseif ($filter == "កីឡា") {
+            $filterType = 'sport';
+        } elseif ($filter == "ការច្នៃប្រឌិត") {
+            $filterType = 'innovation';
+        } else {
+            $filterType = $filter;
+        }
+        return $filterType ?: false;
     }
 
     public function includeSearch()
