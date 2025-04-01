@@ -35,11 +35,12 @@ class BuyTicketController extends Controller
     {
 
         $ticketsData = $request->validated()['tickets'];
+        $paymentStatus = $request->validated();
         $allTickets = [];
 
         try {
 
-            DB::transaction(function () use ($ticketsData, $event, &$allTickets) {
+            DB::transaction(function () use ($ticketsData, $event, &$allTickets, $paymentStatus) {
                 foreach ($ticketsData as $ticketData) {
                     $ticket = Ticket::findOrFail($ticketData['ticket_id']);
                     $requestedQty = $ticketData['qty'];
@@ -48,7 +49,7 @@ class BuyTicketController extends Controller
                         throw new Exception("Insufficient quantity");
                     }
 
-                    if ($ticketData['payment_status'] == false) {
+                    if ($paymentStatus['payment_status'] == false) {
                         throw new Exception("Must be paying first to get your ticket");
                     }
 
@@ -67,7 +68,7 @@ class BuyTicketController extends Controller
                             'user_id' => request()->user()->id,
                             'ticket_code' => $ticketCode,
                             'price' => $ticket->price,
-                            'payment_status' => $ticketData['payment_status'],
+                            'payment_status' => $paymentStatus['payment_status'],
                         ]);
 
                         $allTickets[] = $singleTicket;
