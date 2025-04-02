@@ -13,8 +13,9 @@ use App\Models\Ticket;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class BuyTicketController extends Controller
@@ -81,7 +82,8 @@ class BuyTicketController extends Controller
                     }
                 }
             });
-            return $allTickets;
+
+            return AllBoughtTicketResource::collection($allTickets);
 
         } catch (Exception $e) {
             return response()->json([
