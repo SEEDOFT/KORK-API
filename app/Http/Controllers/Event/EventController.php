@@ -8,7 +8,9 @@ use App\Http\Requests\Event\UpdateEventRequest;
 use App\Http\Requests\Ticket\RegisterTicketRequest;
 use App\Http\Resources\Event\EventResource;
 use App\Http\Traits\FilterColumn;
+use App\Models\Bookmark;
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -20,6 +22,7 @@ class EventController extends Controller
      */
     public function index()
     {
+        Gate::authorize('viewAny', Event::class);
         $query = Event::query();
         $perPage = request()->query('per_page', 15);
 
@@ -28,9 +31,14 @@ class EventController extends Controller
         $query = $this->applyPriceRange($query, 'tickets', 'price');
         $query = $this->applyDateRange($query, 'start_time');
 
+        $userId = request()->user()->id;
+        $bookmarkedEventIds = Bookmark::where('user_id', $userId)->pluck('event_id')->toArray();
+
         $events = $query->paginate($perPage);
 
-        return EventResource::collection($events);
+        return EventResource::collection($events)->additional([
+            'bookmark_status' => fn($event) => in_array($event->id, $bookmarkedEventIds)
+        ]);
     }
 
     /**

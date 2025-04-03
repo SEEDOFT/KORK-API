@@ -30,8 +30,6 @@ Route::middleware('throttle:1000,1')->group(
         Route::post('/register', [RegisterUserController::class, 'register']);
         Route::post('/check-email', [CheckEmailUniqueController::class, 'checkColumnUnique']);
         Route::post('/password-reset', [PasswordResetController::class, 'resetPassword']);
-        Route::apiResource('/events', EventController::class)
-            ->only(['index', 'show']);
         Route::apiResource('/events.tickets', TicketController::class)
             ->scoped()
             ->only(['index']);
@@ -52,7 +50,7 @@ Route::middleware(['auth:sanctum', 'throttle:1000,1'])->group(
             ->only(['show', 'update', 'destroy']);
 
         Route::apiResource('/events', EventController::class)
-            ->only(['store', 'update', 'destroy']);
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
 
         Route::apiResource('/events.tickets', TicketController::class)
             ->scoped()
