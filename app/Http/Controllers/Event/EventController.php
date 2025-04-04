@@ -109,6 +109,8 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
+        Gate::authorize('view', $event);
+
         return EventResource::make($event);
     }
 
