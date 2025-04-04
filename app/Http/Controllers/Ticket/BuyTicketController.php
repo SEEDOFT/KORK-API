@@ -113,12 +113,21 @@ class BuyTicketController extends Controller
     public function destroy(CheckTicketRequest $request, User $user)
     {
         if (auth()->id() !== $user->id) {
-            return response()->json(['error' => 'Unauthorized: You are not the correct user.'], 403);
+            return response()->json([
+                'error' => 'Unauthorized: You are not the correct user.'
+            ], 403);
         }
 
-        $ticketCode = $request->validated();
+        $ticketCode = $request->validated()['ticket_code'];
+        $eventIds = $user->events()->pluck('id');
+        $ticketIds = Ticket::whereIn('event_id', $eventIds)->pluck('id');
 
-        return BuyTicket::where('ticket_code', $ticketCode['ticket_code'])->delete()
+        $deleted = BuyTicket::whereIn('event_id', $eventIds)
+            ->whereIn('ticket_id', $ticketIds)
+            ->where('ticket_code', $ticketCode)
+            ->delete();
+
+        return $deleted
             ? response()->json([
                 'message' => 'Ticket has been scanned successfully.'
             ], 200)
@@ -126,4 +135,5 @@ class BuyTicketController extends Controller
                 'error' => 'Ticket is not found or has been scanned.'
             ], 404);
     }
+
 }
