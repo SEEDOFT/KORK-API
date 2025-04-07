@@ -22,7 +22,8 @@ class CheckTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ticket_code' => 'required',
+            'tickets' => 'required|array',
+            'tickets.*.ticket_code' => 'required|string'
         ];
     }
 }

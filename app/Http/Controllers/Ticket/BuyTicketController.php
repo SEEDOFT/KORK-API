@@ -118,22 +118,48 @@ class BuyTicketController extends Controller
             ], 403);
         }
 
-        $ticketCode = $request->validated()['ticket_code'];
+        $validatedData = $request->validated();
+        $ticketCodes = $validatedData['tickets'];
         $eventIds = $user->events()->pluck('id');
         $ticketIds = Ticket::whereIn('event_id', $eventIds)->pluck('id');
 
-        $deleted = BuyTicket::whereIn('event_id', $eventIds)
-            ->whereIn('ticket_id', $ticketIds)
-            ->where('ticket_code', $ticketCode)
-            ->delete();
+        // Check if all tickets exist before deleting any
+        foreach ($ticketCodes as $ticket) {
+            $ticketCode = $ticket['ticket_code'];
 
-        return $deleted
-            ? response()->json([
-                'message' => 'Ticket has been scanned successfully.'
-            ], 200)
-            : response()->json([
-                'error' => 'Ticket is not found or has been scanned.'
-            ], 404);
+            $exists = BuyTicket::whereIn('event_id', $eventIds)
+                ->whereIn('ticket_id', $ticketIds)
+                ->where('ticket_code', $ticketCode)
+                ->exists();
+
+            if (!$exists) {
+                return response()->json([
+                    'error' => 'Ticket with code ' . $ticketCode . ' not found or already scanned.',
+                    'status' => 'failed'
+                ], 404);
+            }
+        }
+
+        // If we get here, all tickets exist and can be deleted
+        $results = [];
+        $successCount = 0;
+
+        foreach ($ticketCodes as $ticket) {
+            $ticketCode = $ticket['ticket_code'];
+
+            BuyTicket::whereIn('event_id', $eventIds)
+                ->whereIn('ticket_id', $ticketIds)
+                ->where('ticket_code', $ticketCode)
+                ->delete();
+
+            $results[$ticketCode] = 'success';
+            $successCount++;
+        }
+
+        return response()->json([
+            'message' => $successCount . ' ticket(s) scanned successfully.',
+            'results' => $results,
+            'status' => 'success'
+        ], 200);
     }
-
 }

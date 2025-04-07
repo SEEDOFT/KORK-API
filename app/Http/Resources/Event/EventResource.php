@@ -26,44 +26,52 @@ class EventResource extends JsonResource
         $attendeesData = $this->attendees->groupBy('user_id')->map(function ($attendees) {
             $user = $attendees->first()->user;
 
+            $vvipQty = $user->buyTickets
+                ->whereIn('ticket_id', Ticket::where('ticket_type', 'vvip')->pluck('id'))
+                ->count();
+
+            $vipQty = $user->buyTickets
+                ->whereIn('ticket_id', Ticket::where('ticket_type', 'vip')->pluck('id'))
+                ->count();
+
+            $standardQty = $user->buyTickets
+                ->whereIn('ticket_id', Ticket::where('ticket_type', 'standard')->pluck('id'))
+                ->count();
+
+            $normalQty = $user->buyTickets
+                ->whereIn('ticket_id', Ticket::where('ticket_type', 'normal')->pluck('id'))
+                ->count();
+
             return [
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'email' => $user->email,
                 'profile_url' => asset('user/' . $user->profile_url),
                 'vvip' => [
-                    'qty' => $user->buyTickets
-                        ->whereIn('ticket_id', Ticket::where('ticket_type', 'vvip')->pluck('id'))
-                        ->count(),
+                    'qty' => $vvipQty,
                     'price' => Ticket::whereIn('id', $user->buyTickets->pluck('ticket_id'))
                         ->where('ticket_type', 'vvip')
                         ->value('price'),
                 ],
                 'vip' => [
-                    'qty' => $user->buyTickets
-                        ->whereIn('ticket_id', Ticket::where('ticket_type', 'vip')->pluck('id'))
-                        ->count(),
+                    'qty' => $vipQty,
                     'price' => Ticket::whereIn('id', $user->buyTickets->pluck('ticket_id'))
                         ->where('ticket_type', 'vip')
                         ->value('price'),
                 ],
                 'standard' => [
-                    'qty' => $user->buyTickets
-                        ->whereIn('ticket_id', Ticket::where('ticket_type', 'standard')->pluck('id'))
-                        ->count(),
+                    'qty' => $standardQty,
                     'price' => Ticket::whereIn('id', $user->buyTickets->pluck('ticket_id'))
                         ->where('ticket_type', 'standard')
                         ->value('price'),
                 ],
                 'normal' => [
-                    'qty' => $user->buyTickets
-                        ->whereIn('ticket_id', Ticket::where('ticket_type', 'normal')->pluck('id'))
-                        ->count(),
+                    'qty' => $normalQty,
                     'price' => Ticket::whereIn('id', $user->buyTickets->pluck('ticket_id'))
                         ->where('ticket_type', 'normal')
                         ->value('price'),
                 ],
-                'qty' => $attendees->count(),
+                'qty' => $vvipQty + $vipQty + $standardQty + $normalQty, // Sum of all ticket types
             ];
         });
         $attendeesArray = $attendeesData->values()->toArray();

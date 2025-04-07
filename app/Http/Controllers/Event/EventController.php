@@ -10,7 +10,6 @@ use App\Http\Resources\Event\EventResource;
 use App\Http\Traits\FilterColumn;
 use App\Models\Bookmark;
 use App\Models\Event;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
