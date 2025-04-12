@@ -68,7 +68,7 @@ class EventController extends Controller
         } elseif ($eventData['event_type'] == "ហ្គេម") {
             $event_type = 'game';
         } elseif ($eventData['event_type'] == "ម៉ូដ") {
-            $event_type = 'cofashionncert';
+            $event_type = 'fashion';
         } elseif ($eventData['event_type'] == "កីឡា") {
             $event_type = 'sport';
         } elseif ($eventData['event_type'] == "ការច្នៃប្រឌិត") {

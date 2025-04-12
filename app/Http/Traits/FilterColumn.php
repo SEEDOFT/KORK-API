@@ -18,7 +18,7 @@ trait FilterColumn
         } elseif ($filter == "ហ្គេម") {
             $filterType = 'game';
         } elseif ($filter == "ម៉ូដ") {
-            $filterType = 'cofashionncert';
+            $filterType = 'fashion';
         } elseif ($filter == "កីឡា") {
             $filterType = 'sport';
         } elseif ($filter == "ការច្នៃប្រឌិត") {
@@ -98,25 +98,26 @@ trait FilterColumn
     public function applyDateRange(EloquentBuilder|QueryBuilder|Model $model, string $column)
     {
         $date = $this->includeDateRange();
+        $result = $model;
 
-        if (!$date) {
-            return $model;
+        if ($date) {
+            $today = Carbon::today();
+            $tomorrow = Carbon::tomorrow();
+            $startOfWeek = Carbon::now()->startOfWeek();
+            $endOfWeek = Carbon::now()->endOfWeek();
+
+            if ($date === 'today') {
+                $result = $model->whereDate($column, '=', $today);
+            } elseif ($date === 'tomorrow') {
+                $result = $model->whereDate($column, '=', $tomorrow);
+            } elseif ($date === 'this_week') {
+                $result = $model->whereBetween($column, [$startOfWeek, $endOfWeek]);
+            } else {
+                $result = $model->whereDate($column, '=', $date);
+            }
         }
 
-        $today = Carbon::today();
-        $tomorrow = Carbon::tomorrow();
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
-
-        if ($date === 'today') {
-            return $model->whereDate($column, '=', $today);
-        } elseif ($date === 'tomorrow') {
-            return $model->whereDate($column, '=', $tomorrow);
-        } elseif ($date === 'this_week') {
-            return $model->whereBetween($column, [$startOfWeek, $endOfWeek]);
-        } else {
-            return $model->whereDate($column, '=', $date);
-        }
+        return $result;
     }
 
 }
