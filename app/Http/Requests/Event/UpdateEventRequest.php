@@ -22,13 +22,15 @@ class UpdateEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_name' => ['sometimes'],
-            'event_type' => ['sometimes', 'max:20'],
-            'description' => ['sometimes'],
-            'location' => ['sometimes', 'string'],
-            'poster_url' => ['sometimes', 'image'],
-            'start_time' => ['sometimes', 'date'],
-            'end_time' => ['sometimes', 'date'],
+            'event_name' => ['sometimes', 'string', 'max:255'],
+            'event_type' => ['sometimes', 'string', 'max:20'],
+            'description' => ['sometimes', 'string'],
+            'location' => ['sometimes', 'string', 'max:255'],
+            'poster_url' => ['sometimes', 'image', 'mimes:jpeg,png,jpg'],
+            'start_date' => ['sometimes', 'required_with:start_time'],
+            'start_time' => ['sometimes', 'required_with:start_date'],
+            'end_date' => ['sometimes', 'required_with:end_time', 'date', 'after_or_equal:start_date'],
+            'end_time' => ['sometimes', 'required_with:end_date'],
         ];
     }
 }

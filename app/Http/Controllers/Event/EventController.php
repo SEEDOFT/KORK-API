@@ -49,7 +49,6 @@ class EventController extends Controller
 
         $eventData = $reqEvent->validated();
         $ticketData = $reqTicket->validated();
-        $event_type = '';
 
         $uploadPath = public_path('event');
 
@@ -63,19 +62,14 @@ class EventController extends Controller
         }
 
 
-        if ($eventData['event_type'] == "តន្ត្រី") {
-            $event_type = 'concert';
-        } elseif ($eventData['event_type'] == "ហ្គេម") {
-            $event_type = 'game';
-        } elseif ($eventData['event_type'] == "ម៉ូដ") {
-            $event_type = 'fashion';
-        } elseif ($eventData['event_type'] == "កីឡា") {
-            $event_type = 'sport';
-        } elseif ($eventData['event_type'] == "ការច្នៃប្រឌិត") {
-            $event_type = 'innovation';
-        } else {
-            $event_type = $eventData['event_type'];
-        }
+        $event_type = match ($eventData['event_type']) {
+            "តន្ត្រី" => 'concert',
+            "ហ្គេម" => 'game',
+            "ម៉ូដ" => 'fashion',
+            "កីឡា" => 'sport',
+            "ការច្នៃប្រឌិត" => 'innovation',
+            default => $eventData['event_type'],
+        };
 
         $result = DB::transaction(function () use ($eventData, $ticketData, $imageName, $event_type) {
             $event = Event::create([
@@ -121,21 +115,53 @@ class EventController extends Controller
         Gate::authorize('update', $event);
 
         $eventData = $reqEvent->validated();
-
         $uploadPath = public_path('event');
+
         if (!file_exists($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
 
         if ($reqEvent->hasFile('poster_url')) {
-            if (!empty($uploadPath . '/' . $event->poster_url)) {
-                unlink($uploadPath . '/' . $event->poster_url);
+            if (!empty($event->poster_url) && file_exists("{$uploadPath}/{$event->poster_url}")) {
+                unlink("{$uploadPath}/{$event->poster_url}");
             }
 
             $imageName = time() . '.' . $reqEvent->file('poster_url')->extension();
             $reqEvent->file('poster_url')->move($uploadPath, $imageName);
-
             $eventData['poster_url'] = $imageName;
+        }
+
+        if (isset($eventData['event_type'])) {
+            $eventData['event_type'] = match ($eventData['event_type']) {
+                "តន្ត្រី" => 'concert',
+                "ហ្គេម" => 'game',
+                "ម៉ូដ" => 'fashion',
+                "កីឡា" => 'sport',
+                "ការច្នៃប្រឌិត" => 'innovation',
+                default => $eventData['event_type'],
+            };
+        }
+
+        if (isset($eventData['start_time'])) {
+            $existingDate = date('Y-m-d', strtotime($event->start_time));
+            $newDate = isset($eventData['start_date']) ? $eventData['start_date'] : $existingDate;
+            $eventData['start_time'] = $newDate . ' ' . $eventData['start_time'];
+            unset($eventData['start_date']);
+        } elseif (isset($eventData['start_date'])) {
+            $existingTime = date('H:i:s', strtotime($event->start_time));
+            $eventData['start_time'] = $eventData['start_date'] . ' ' . $existingTime;
+            unset($eventData['start_date']);
+        }
+
+        if (isset($eventData['end_time'])) {
+            $existingDate = date('Y-m-d', strtotime($event->end_time));
+            $newDate = isset($eventData['end_date']) ? $eventData['end_date'] : $existingDate;
+            $eventData['end_time'] = $newDate . ' ' . $eventData['end_time'];
+            unset($eventData['end_date']);
+        } elseif (isset($eventData['end_date'])) {
+            $existingTime = date('H:i:s', strtotime($event->end_time));
+            $eventData['end_time'] = $eventData['end_date'] . ' ' . $existingTime;
+            unset($eventData['end_date']);
         }
 
         $event->update($eventData);

@@ -35,7 +35,7 @@ return [
     | you define after how many seconds a verification code will expire.
     |
     */
-    'expire_seconds' => 1 * 60,
+    'expire_seconds' => 1 * 120,
 
     /*
     |--------------------------------------------------------------------------
