@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\RegisterUserRequest;
-use App\Http\Resources\User\RegisterUserResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Wotz\VerificationCode\VerificationCode;
 
 class RegisterUserController extends Controller
 {

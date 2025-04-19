@@ -1,6 +1,5 @@
 <?php
 
-use App\Notifications\CustomVerificationNotification;
 use App\Notifications\EmailVerification;
 
 return [
@@ -35,7 +34,7 @@ return [
     | you define after how many seconds a verification code will expire.
     |
     */
-    'expire_seconds' => 1 * 120,
+    'expire_seconds' => 1 * 600,
 
     /*
     |--------------------------------------------------------------------------
@@ -62,7 +61,6 @@ return [
     |   - \Wotz\VerificationCode\Notifications\VerificationCodeCreatedInterface
     |
     */
-    // 'notification' => Wotz\VerificationCode\Notifications\VerificationCodeCreated::class,
     'notification' => EmailVerification::class,
 
     /*
