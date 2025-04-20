@@ -23,7 +23,7 @@ class CheckTicketRequest extends FormRequest
     {
         return [
             'tickets' => 'required|array',
-            'tickets.*.ticket_code' => 'required|string'
+            'tickets.*' => 'required|string'
         ];
     }
 }

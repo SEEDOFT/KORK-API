@@ -123,9 +123,8 @@ class BuyTicketController extends Controller
         $eventIds = $user->events()->pluck('id');
         $ticketIds = Ticket::whereIn('event_id', $eventIds)->pluck('id');
 
-        // Check if all tickets exist before deleting any
         foreach ($ticketCodes as $ticket) {
-            $ticketCode = $ticket['ticket_code'];
+            $ticketCode = $ticket;
 
             $exists = BuyTicket::whereIn('event_id', $eventIds)
                 ->whereIn('ticket_id', $ticketIds)
@@ -145,7 +144,7 @@ class BuyTicketController extends Controller
         $successCount = 0;
 
         foreach ($ticketCodes as $ticket) {
-            $ticketCode = $ticket['ticket_code'];
+            $ticketCode = $ticket;
 
             BuyTicket::whereIn('event_id', $eventIds)
                 ->whereIn('ticket_id', $ticketIds)
