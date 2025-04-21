@@ -12,6 +12,7 @@ use App\Models\BuyTicket;
 use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -120,45 +121,54 @@ class BuyTicketController extends Controller
 
         $validatedData = $request->validated();
         $ticketCodes = $validatedData['tickets'];
-        $eventIds = $user->events()->pluck('id');
-        $ticketIds = Ticket::whereIn('event_id', $eventIds)->pluck('id');
-
-        foreach ($ticketCodes as $ticket) {
-            $ticketCode = $ticket;
-
-            $exists = BuyTicket::whereIn('event_id', $eventIds)
-                ->whereIn('ticket_id', $ticketIds)
-                ->where('ticket_code', $ticketCode)
-                ->exists();
-
-            if (!$exists) {
-                return response()->json([
-                    'error' => 'Ticket with code ' . $ticketCode . ' not found or already scanned.',
-                    'status' => 'failed'
-                ], 404);
-            }
-        }
-
-        // If we get here, all tickets exist and can be deleted
         $results = [];
         $successCount = 0;
+        $today = now()->startOfDay();
 
-        foreach ($ticketCodes as $ticket) {
-            $ticketCode = $ticket;
+        foreach ($ticketCodes as $ticketCode) {
+            // First find the ticket in BuyTickets based on code
+            $buyTicket = BuyTicket::where('ticket_code', $ticketCode)->first();
 
-            BuyTicket::whereIn('event_id', $eventIds)
-                ->whereIn('ticket_id', $ticketIds)
-                ->where('ticket_code', $ticketCode)
-                ->delete();
+            if (!$buyTicket) {
+                $results[$ticketCode] = 'Ticket not found';
+                continue;
+            }
 
+            // Get event and ticket details
+            $event = Event::find($buyTicket->event_id);
+            $ticket = Ticket::find($buyTicket->ticket_id);
+
+            if (!$event || !$ticket) {
+                $results[$ticketCode] = 'Invalid event or ticket type';
+                continue;
+            }
+
+            // Check if user has access to this event
+            $userHasAccess = $user->events()->where('id', $event->id)->exists();
+            if (!$userHasAccess) {
+                $results[$ticketCode] = 'Unauthorized: You do not have access to this event';
+                continue;
+            }
+
+            // Check if the event starts today
+            $eventStartDate = Carbon::parse($event->start_time)->startOfDay();
+
+            if (!$eventStartDate->equalTo($today)) {
+                $results[$ticketCode] = 'Cannot scan: Event is not scheduled for today';
+                continue;
+            }
+
+            // Delete/mark as scanned
+            $buyTicket->delete();
             $results[$ticketCode] = 'success';
             $successCount++;
         }
 
         return response()->json([
             'message' => $successCount . ' ticket(s) scanned successfully.',
+            'qty' => $successCount,
             'results' => $results,
-            'status' => 'success'
-        ], 200);
+            'status' => $successCount > 0 ? 'success' : 'failed'
+        ], $successCount > 0 ? 200 : 400);
     }
 }
