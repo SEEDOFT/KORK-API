@@ -46,6 +46,18 @@ class BuyTicketController extends Controller
             ], 409);
         } else {
             try {
+                // First, validate that all ticket IDs belong to this event
+                foreach ($ticketsData as $ticketData) {
+                    $ticket = Ticket::where('id', $ticketData['ticket_id'])
+                        ->where('event_id', $event->id)
+                        ->first();
+
+                    if (!$ticket) {
+                        return response()->json([
+                            'error' => 'Ticket ID ' . $ticketData['ticket_id'] . ' does not belong to this event'
+                        ], 400);
+                    }
+                }
 
                 DB::transaction(function () use ($ticketsData, $event, &$allTickets, $paymentStatus) {
                     foreach ($ticketsData as $ticketData) {
@@ -53,7 +65,7 @@ class BuyTicketController extends Controller
                         $requestedQty = $ticketData['qty'];
 
                         if ($ticket->available_qty < $requestedQty) {
-                            throw new Exception("Insufficient quantity");
+                            throw new Exception("Insufficient quantity for ticket type: " . $ticket->ticket_type);
                         }
 
                         if ($paymentStatus['payment_status'] == false) {
@@ -121,16 +133,17 @@ class BuyTicketController extends Controller
 
         $validatedData = $request->validated();
         $ticketCodes = $validatedData['tickets'];
-        $results = [];
         $successCount = 0;
-        $today = now()->startOfDay();
+        $now = now();
+        $scannedTicketTypes = [];
+        $errorMessage = null;
 
         foreach ($ticketCodes as $ticketCode) {
             // First find the ticket in BuyTickets based on code
             $buyTicket = BuyTicket::where('ticket_code', $ticketCode)->first();
 
             if (!$buyTicket) {
-                $results[$ticketCode] = 'Ticket not found';
+                $errorMessage = 'Ticket not found';
                 continue;
             }
 
@@ -139,36 +152,58 @@ class BuyTicketController extends Controller
             $ticket = Ticket::find($buyTicket->ticket_id);
 
             if (!$event || !$ticket) {
-                $results[$ticketCode] = 'Invalid event or ticket type';
+                $errorMessage = 'Invalid event or ticket type';
                 continue;
             }
 
             // Check if user has access to this event
             $userHasAccess = $user->events()->where('id', $event->id)->exists();
             if (!$userHasAccess) {
-                $results[$ticketCode] = 'Unauthorized: You do not have access to this event';
+                $errorMessage = 'Unauthorized: You do not have access to this event';
                 continue;
             }
 
-            // Check if the event starts today
-            $eventStartDate = Carbon::parse($event->start_time)->startOfDay();
+            // Check if the event is currently ongoing
+            $eventStartTime = Carbon::parse($event->start_time);
+            $eventEndTime = Carbon::parse($event->end_time);
 
-            if (!$eventStartDate->equalTo($today)) {
-                $results[$ticketCode] = 'Cannot scan: Event is not scheduled for today';
+            if ($now->lt($eventStartTime)) {
+                $errorMessage = 'Cannot scan: Event has not started yet';
+                continue;
+            }
+
+            if ($now->gt($eventEndTime)) {
+                $errorMessage = 'Cannot scan: Event has already ended';
                 continue;
             }
 
             // Delete/mark as scanned
             $buyTicket->delete();
-            $results[$ticketCode] = 'success';
             $successCount++;
+
+            // Track ticket types for response
+            $ticketTypeName = $ticket->ticket_type;
+            if (!isset($scannedTicketTypes[$ticketTypeName])) {
+                $scannedTicketTypes[$ticketTypeName] = [
+                    'type' => $ticketTypeName,
+                    'qty' => 1
+                ];
+            } else {
+                $scannedTicketTypes[$ticketTypeName]['qty']++;
+            }
         }
 
+        // If any tickets were successfully scanned
+        if ($successCount > 0) {
+            return response()->json([
+                'message' => $successCount . ' ticket(s) scanned successfully.',
+                'scanned_tickets' => array_values($scannedTicketTypes)
+            ], 200);
+        }
+
+        // If no tickets were scanned successfully
         return response()->json([
-            'message' => $successCount . ' ticket(s) scanned successfully.',
-            'qty' => $successCount,
-            'results' => $results,
-            'status' => $successCount > 0 ? 'success' : 'failed'
-        ], $successCount > 0 ? 200 : 400);
+            'error' => $errorMessage ?? 'No tickets could be scanned'
+        ], 400);
     }
 }
