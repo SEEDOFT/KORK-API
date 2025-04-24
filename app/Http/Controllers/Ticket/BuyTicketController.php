@@ -139,7 +139,6 @@ class BuyTicketController extends Controller
         $errorMessage = null;
 
         foreach ($ticketCodes as $ticketCode) {
-            // First find the ticket in BuyTickets based on code
             $buyTicket = BuyTicket::where('ticket_code', $ticketCode)->first();
 
             if (!$buyTicket) {
@@ -147,7 +146,6 @@ class BuyTicketController extends Controller
                 continue;
             }
 
-            // Get event and ticket details
             $event = Event::find($buyTicket->event_id);
             $ticket = Ticket::find($buyTicket->ticket_id);
 
@@ -156,14 +154,12 @@ class BuyTicketController extends Controller
                 continue;
             }
 
-            // Check if user has access to this event
             $userHasAccess = $user->events()->where('id', $event->id)->exists();
             if (!$userHasAccess) {
                 $errorMessage = 'Unauthorized: You do not have access to this event';
                 continue;
             }
 
-            // Check if the event is currently ongoing
             $eventStartTime = Carbon::parse($event->start_time);
             $eventEndTime = Carbon::parse($event->end_time);
 
@@ -177,31 +173,28 @@ class BuyTicketController extends Controller
                 continue;
             }
 
-            // Delete/mark as scanned
             $buyTicket->delete();
             $successCount++;
 
-            // Track ticket types for response
             $ticketTypeName = $ticket->ticket_type;
             if (!isset($scannedTicketTypes[$ticketTypeName])) {
-                $scannedTicketTypes[$ticketTypeName] = [
-                    'type' => $ticketTypeName,
-                    'qty' => 1
-                ];
+                $scannedTicketTypes[$ticketTypeName] = 1;
             } else {
-                $scannedTicketTypes[$ticketTypeName]['qty']++;
+                $scannedTicketTypes[$ticketTypeName]++;
             }
         }
 
-        // If any tickets were successfully scanned
         if ($successCount > 0) {
+            $successMessage = '';
+            foreach ($scannedTicketTypes as $type => $count) {
+                $successMessage .= ($successMessage ? ', ' : '') . $count . ' ' . $type;
+            }
+
             return response()->json([
-                'message' => $successCount . ' ticket(s) scanned successfully.',
-                'scanned_tickets' => array_values($scannedTicketTypes)
+                'success' => $successMessage
             ], 200);
         }
 
-        // If no tickets were scanned successfully
         return response()->json([
             'error' => $errorMessage ?? 'No tickets could be scanned'
         ], 400);
