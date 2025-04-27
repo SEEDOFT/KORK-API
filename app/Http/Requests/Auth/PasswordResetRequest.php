@@ -25,7 +25,6 @@ class PasswordResetRequest extends FormRequest
         return [
             'email' => ['sometimes', 'email'],
             'current_password' => ['sometimes', 'current_password'],
-            'code' => ['sometimes'],
             'password' => ['sometimes', 'confirmed', Password::defaults()],
         ];
     }
