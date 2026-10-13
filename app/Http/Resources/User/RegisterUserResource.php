@@ -9,8 +9,9 @@ class RegisterUserResource extends JsonResource
 {
     /**
      * pick token by default
-     * @param mixed $resource
-     * @param mixed $token
+     *
+     * @param  mixed  $resource
+     * @param  mixed  $token
      */
     public function __construct($resource, $token = null)
     {
@@ -34,9 +35,9 @@ class RegisterUserResource extends JsonResource
             'phone_number' => $this->phone_number,
             'nationality' => $this->nationality,
             'gender' => $this->gender,
-            'profile_url' => asset('user/' . $this->profile_url),
+            'profile_url' => asset('user/'.$this->profile_url),
             'location' => $this->location,
-            'token' => $this->token
+            'token' => $this->token,
         ];
     }
 }

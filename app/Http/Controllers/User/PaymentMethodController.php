@@ -31,7 +31,6 @@ class PaymentMethodController extends Controller
         );
     }
 
-
     /**
      * Store a newly created payment method.
      */
@@ -52,19 +51,20 @@ class PaymentMethodController extends Controller
             ->where('user_id', $userId)
             ->exists();
 
-        if (!$exists) {
+        if (! $exists) {
             $payment = PaymentMethod::create([
                 'user_id' => $user->id,
                 'card_number' => $data['card_number'],
                 'card_holder_name' => $data['card_holder_name'],
                 'expired_date' => $data['expired_date'],
-                'cvv' => $data['cvv']
+                'cvv' => $data['cvv'],
             ]);
 
             return PaymentMethodResource::make($payment);
         }
+
         return response()->json([
-            'error' => 'Card number already exists'
+            'error' => 'Card number already exists',
         ], 409);
     }
 
@@ -123,5 +123,4 @@ class PaymentMethodController extends Controller
 
         return response()->json(['message' => 'Payment method has been deleted successfully.'], 204);
     }
-
 }

@@ -46,8 +46,8 @@ class BookmarkController extends Controller
         $validated = $request->validate([
             'event_id' => [
                 'required',
-                Rule::unique('bookmarks')->where(fn($query) => $query->where('user_id', $user->id)),
-                'exists:events,id'
+                Rule::unique('bookmarks')->where(fn ($query) => $query->where('user_id', $user->id)),
+                'exists:events,id',
             ],
         ]);
 
@@ -58,7 +58,6 @@ class BookmarkController extends Controller
 
         return BookmarkResource::make($bookmark);
     }
-
 
     /**
      * Display the specified resource.
@@ -82,17 +81,16 @@ class BookmarkController extends Controller
 
         $bookmark = Bookmark::where('event_id', $event_id)->first();
 
-        if (!$bookmark) {
+        if (! $bookmark) {
             return response()->json([
-                'message' => 'Bookmark not found.'
+                'message' => 'Bookmark not found.',
             ], 404);
         }
 
         $bookmark->delete();
 
         return response()->json([
-            'message' => 'Bookmark deleted successfully.'
+            'message' => 'Bookmark deleted successfully.',
         ], 204);
     }
-
 }

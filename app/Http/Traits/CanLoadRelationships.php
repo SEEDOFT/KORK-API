@@ -15,12 +15,12 @@ trait CanLoadRelationships
         ?array $relations = null
     ): Model|EloquentBuilder|QueryBuilder|HasMany|HasOne {
 
-        $relations = $relations ?? $this->$relations ?? []; //check if relations is passed or not
+        $relations = $relations ?? $this->$relations ?? []; // check if relations is passed or not
 
         foreach ($relations as $relation) {
             $for->when(
                 $this->includeRelations($relation),
-                fn($q) => $for instanceof Model ? $for->load($relation) : $q->with($relation),
+                fn ($q) => $for instanceof Model ? $for->load($relation) : $q->with($relation),
             );
         }
 
@@ -30,7 +30,7 @@ trait CanLoadRelationships
     public function includeRelations(string $relation): bool
     {
         $include = request()->query('include');
-        if (!$include) {
+        if (! $include) {
             return false;
         }
 
@@ -39,4 +39,3 @@ trait CanLoadRelationships
         return in_array($relation, $relations);
     }
 }
-

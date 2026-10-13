@@ -23,7 +23,7 @@ class UserResource extends JsonResource
             'phone_number' => $this->phone_number,
             'nationality' => $this->nationality,
             'gender' => $this->gender,
-            'profile_url' => asset('user/' . $this->profile_url),
+            'profile_url' => asset('user/'.$this->profile_url),
             'location' => $this->location,
             'payment_methods' => PaymentMethodResource::collection($this->paymentMethods),
         ];

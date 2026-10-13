@@ -1,7 +1,11 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\FirebaseEmailService;
+use App\Providers\FirebaseServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\FirebaseEmailService::class,
-    App\Providers\FirebaseServiceProvider::class,
+    AppServiceProvider::class,
+    FirebaseEmailService::class,
+    FirebaseServiceProvider::class,
 ];

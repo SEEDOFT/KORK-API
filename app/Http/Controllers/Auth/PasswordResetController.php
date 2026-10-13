@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\PasswordResetRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
-use Wotz\VerificationCode\VerificationCode;
 
 class PasswordResetController extends Controller
 {
     /**
      * Summary of __invoke
-     * @param PasswordResetRequest $request
-     * @return mixed|\Illuminate\Http\JsonResponse
+     *
+     * @return mixed|JsonResponse
      */
     public function __invoke(PasswordResetRequest $request)
     {
@@ -24,14 +24,17 @@ class PasswordResetController extends Controller
             if (Hash::check($validated['current_password'], $user->password)) {
                 $user->update([
                     'email_verified_at' => now(),
-                    'password' => Hash::make($validated['password'])
+                    'password' => Hash::make($validated['password']),
                 ]);
+
                 return response()->json([
-                    'message' => 'Password changed successfully'
+                    'message' => 'Password changed successfully',
                 ], 200);
             }
+
             return response()->json(['error' => 'Incorrect current password'], 400);
         }
+
         return response()->json(['error' => 'Please provide current password or verification code'], 400);
     }
 
@@ -42,17 +45,18 @@ class PasswordResetController extends Controller
         if (isset($validated['email'])) {
             $user = User::where('email', $validated['email'])->first();
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json(['error' => 'User not found'], 404);
             }
 
             $user->update([
                 'email_verified_at' => now(),
-                'password' => Hash::make($validated['password'])
+                'password' => Hash::make($validated['password']),
             ]);
+
             return response()->json(['message' => 'Password reset successfully'], 200);
         }
+
         return response()->json(['error' => 'Email is required to reset password'], 400);
     }
-
 }

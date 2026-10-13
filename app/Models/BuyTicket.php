@@ -17,7 +17,7 @@ class BuyTicket extends Model
         'ticket_id',
         'ticket_code',
         'price',
-        'payment_status'
+        'payment_status',
     ];
 
     public function user(): BelongsTo
@@ -39,5 +39,4 @@ class BuyTicket extends Model
     {
         return $this->hasMany(Attendee::class);
     }
-
 }

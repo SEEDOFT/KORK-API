@@ -11,7 +11,7 @@ class CheckPaymentMethodUniqueController extends Controller
     public function checkCreditCardNumberUnique(Request $request)
     {
         $cardNum = $request->validate([
-            'card_number' => 'required|numeric'
+            'card_number' => 'required|numeric',
         ]);
 
         $userId = auth()->id();
@@ -20,14 +20,14 @@ class CheckPaymentMethodUniqueController extends Controller
             ->where('user_id', $userId)
             ->exists();
 
-        if (!$exists) {
+        if (! $exists) {
             return response()->json([
-                'message' => 'Card number doesn\'t exist yet.'
+                'message' => 'Card number doesn\'t exist yet.',
             ], 200);
         }
 
         return response()->json([
-            'error' => 'Card number already exists'
+            'error' => 'Card number already exists',
         ], 409);
     }
 }

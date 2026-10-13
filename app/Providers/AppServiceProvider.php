@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Http\Resources\Ticket\TicketResource;
-use App\Http\Resources\User\BookmarkResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Support\ServiceProvider;
 

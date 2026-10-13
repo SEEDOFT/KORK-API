@@ -46,7 +46,7 @@ class EventResource extends JsonResource
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'email' => $user->email,
-                'profile_url' => asset('user/' . $user->profile_url),
+                'profile_url' => asset('user/'.$user->profile_url),
                 'vvip' => [
                     'qty' => $vvipQty,
                     'price' => Ticket::whereIn('id', $user->buyTickets->pluck('ticket_id'))
@@ -82,7 +82,7 @@ class EventResource extends JsonResource
             'event_type' => $this->event_type,
             'description' => $this->description,
             'location' => $this->location,
-            'poster_url' => asset('event/' . $this->poster_url),
+            'poster_url' => asset('event/'.$this->poster_url),
             'start_date' => date('Y-m-d', strtotime($this->start_time)),
             'end_date' => date('Y-m-d', strtotime($this->end_time)),
             'start_time' => date('H:i:s', strtotime($this->start_time)),
@@ -93,5 +93,4 @@ class EventResource extends JsonResource
             'bookmark_status' => $isBookmarked,
         ];
     }
-
 }

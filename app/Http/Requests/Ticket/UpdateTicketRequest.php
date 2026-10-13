@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Ticket;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTicketRequest extends FormRequest
@@ -17,14 +18,14 @@ class UpdateTicketRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             'ticket_type' => ['sometimes', 'unique:tickets,ticket_type', 'string', 'in:vvip,vip,standard,normal'],
             'qty' => ['sometimes', 'integer', 'min:0'],
-            'price' => ['sometimes', 'numeric', 'min:0']
+            'price' => ['sometimes', 'numeric', 'min:0'],
         ];
     }
 }

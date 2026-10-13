@@ -9,15 +9,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Organizer extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'org_name',
         'org_email',
         'org_description',
-        'event_id'
+        'event_id',
     ];
 
     protected $casts = [
-        'event_id' => 'integer'
+        'event_id' => 'integer',
     ];
 
     // public function event(): BelongsTo

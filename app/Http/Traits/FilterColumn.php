@@ -13,50 +13,54 @@ trait FilterColumn
     {
         $filter = request()->query('filter');
         $filterType = '';
-        if ($filter == "តន្ត្រី") {
+        if ($filter == 'តន្ត្រី') {
             $filterType = 'concert';
-        } elseif ($filter == "ហ្គេម") {
+        } elseif ($filter == 'ហ្គេម') {
             $filterType = 'game';
-        } elseif ($filter == "ម៉ូដ") {
+        } elseif ($filter == 'ម៉ូដ') {
             $filterType = 'fashion';
-        } elseif ($filter == "កីឡា") {
+        } elseif ($filter == 'កីឡា') {
             $filterType = 'sport';
-        } elseif ($filter == "ការច្នៃប្រឌិត") {
+        } elseif ($filter == 'ការច្នៃប្រឌិត') {
             $filterType = 'innovation';
         } else {
             $filterType = $filter;
         }
+
         return $filterType ?: false;
     }
 
     public function includeSearch()
     {
         $search = request()->query('search');
+
         return $search ?: false;
     }
 
     public function includeMinPrice()
     {
         $minPrice = request()->query('min_price');
-        if (!$minPrice) {
+        if (! $minPrice) {
             return false;
         }
+
         return $minPrice;
     }
 
     public function includeMaxPrice()
     {
         $maxPrice = request()->query('max_price');
-        if (!$maxPrice) {
+        if (! $maxPrice) {
             return false;
         }
+
         return $maxPrice;
     }
-
 
     public function includeDateRange(): ?string
     {
         $date = request()->query('date');
+
         return $date ?: null;
     }
 
@@ -66,6 +70,7 @@ trait FilterColumn
         if ($filter) {
             $model->where($column, $filter);
         }
+
         return $model;
     }
 
@@ -73,8 +78,9 @@ trait FilterColumn
     {
         $search = $this->includeSearch();
         if ($search) {
-            $model->where($column, 'LIKE', '%' . $search . '%');
+            $model->where($column, 'LIKE', '%'.$search.'%');
         }
+
         return $model;
     }
 
@@ -91,9 +97,9 @@ trait FilterColumn
                 ]);
             });
         }
+
         return $model;
     }
-
 
     public function applyDateRange(EloquentBuilder|QueryBuilder|Model $model, string $column)
     {
@@ -119,6 +125,4 @@ trait FilterColumn
 
         return $result;
     }
-
 }
-

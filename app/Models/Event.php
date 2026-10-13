@@ -20,7 +20,7 @@ class Event extends Model
         'location',
         'poster_url',
         'start_time',
-        'end_time'
+        'end_time',
     ];
 
     // public function organizer(): HasOne

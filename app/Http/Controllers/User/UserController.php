@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-
     use FilterColumn;
+
     /**
      * Display all user
      */
@@ -22,6 +22,7 @@ class UserController extends Controller
     {
         return AllUserResource::collection(User::paginate());
     }
+
     /**
      * Display the specified resource.
      */
@@ -45,22 +46,21 @@ class UserController extends Controller
             return response()->json(['error' => 'You can only update your own information.'], 403);
         }
 
-
         Gate::authorize('update', $user);
 
         $data = $updateRequest->validated();
 
         $uploadPath = public_path('user');
-        if (!file_exists($uploadPath)) {
+        if (! file_exists($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
 
         if ($updateRequest->hasFile('profile_url')) {
-            if (!empty($user->profile_url) && file_exists($uploadPath . '/' . $user->profile_url)) {
-                unlink($uploadPath . '/' . $user->profile_url);
+            if (! empty($user->profile_url) && file_exists($uploadPath.'/'.$user->profile_url)) {
+                unlink($uploadPath.'/'.$user->profile_url);
             }
 
-            $imageName = time() . '.' . $updateRequest->file('profile_url')->extension();
+            $imageName = time().'.'.$updateRequest->file('profile_url')->extension();
             $updateRequest->file('profile_url')->move($uploadPath, $imageName);
 
             $data['profile_url'] = $imageName;
@@ -82,7 +82,7 @@ class UserController extends Controller
 
         Gate::authorize('delete', $user);
 
-        $imagePath = public_path('user/' . $user->profile_url);
+        $imagePath = public_path('user/'.$user->profile_url);
         if (file_exists($imagePath) && is_file($imagePath)) {
             unlink($imagePath);
         }
@@ -91,7 +91,7 @@ class UserController extends Controller
         $user->tokens()->delete();
 
         return response()->json([
-            'message' => 'User has been deleted successfully.'
+            'message' => 'User has been deleted successfully.',
         ], 204);
     }
 
@@ -112,7 +112,6 @@ class UserController extends Controller
         $allEvents = $this->applySearch($allEvents, 'event_name');
         $allEvents = $this->applyPriceRange($allEvents, 'tickets', 'price');
         $allEvents = $this->applyDateRange($allEvents, 'start_time');
-
 
         return EventResource::collection($allEvents->paginate($perPage));
     }

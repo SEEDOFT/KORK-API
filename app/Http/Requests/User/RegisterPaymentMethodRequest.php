@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\User;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterPaymentMethodRequest extends FormRequest
@@ -17,7 +18,7 @@ class RegisterPaymentMethodRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -25,7 +26,7 @@ class RegisterPaymentMethodRequest extends FormRequest
             'card_number' => ['required', 'numeric'],
             'card_holder_name' => ['required', 'string'],
             'expired_date' => ['required', 'regex:/^(0[1-9]|1[0-2])\/([0-9]{2})$/'],
-            'cvv' => ['required', 'numeric']
+            'cvv' => ['required', 'numeric'],
         ];
     }
 }

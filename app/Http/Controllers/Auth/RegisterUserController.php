@@ -6,14 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\RegisterUserRequest;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterUserController extends Controller
 {
     /**
      * Summary of register
-     * @param RegisterUserRequest $registerRequest
-     * @return mixed|\Illuminate\Http\JsonResponse
+     *
+     * @return mixed|JsonResponse
      */
     public function register(RegisterUserRequest $registerRequest)
     {
@@ -21,12 +22,12 @@ class RegisterUserController extends Controller
         $gender = '';
 
         $uploadPath = public_path('user');
-        if (!file_exists($uploadPath)) {
+        if (! file_exists($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
 
         if ($registerRequest->hasFile('profile_url')) {
-            $imageName = time() . '.' . $registerRequest->file('profile_url')->extension();
+            $imageName = time().'.'.$registerRequest->file('profile_url')->extension();
             $registerRequest->file('profile_url')->move($uploadPath, $imageName);
         }
 
@@ -54,6 +55,7 @@ class RegisterUserController extends Controller
         ]);
 
         $token = $user->createToken('api-token')->plainTextToken;
+
         return UserResource::make($user);
     }
 }

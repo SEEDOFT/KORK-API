@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Event>
+ * @extends Factory<Event>
  */
 class EventFactory extends Factory
 {
@@ -23,7 +24,7 @@ class EventFactory extends Factory
             'location' => fake()->streetAddress(),
             'poster_url' => fake()->imageUrl(),
             'start_time' => fake()->dateTimeBetween('now', '+1 month'),
-            'end_time' => fake()->dateTimeBetween('+1 month', '+2 month')
+            'end_time' => fake()->dateTimeBetween('+1 month', '+2 month'),
         ];
     }
 }

@@ -18,6 +18,7 @@ class TicketController extends Controller
     public function index(Event $event)
     {
         $perPage = request()->query('per_page', 15);
+
         return TicketResource::collection($event->tickets()->paginate($perPage));
     }
 
@@ -71,7 +72,7 @@ class TicketController extends Controller
 
         if (isset($data['qty'])) {
             if ($data['qty'] < $ticket->sold_qty) {
-                return response()->json(['error' => "New quantity cannot be lower than the number of sold tickets."], 400);
+                return response()->json(['error' => 'New quantity cannot be lower than the number of sold tickets.'], 400);
             }
 
             if ($data['qty'] > $ticket->qty) {
@@ -91,7 +92,6 @@ class TicketController extends Controller
 
         return TicketResource::make($ticket);
     }
-
 
     /**
      * Remove the specified resource from storage.

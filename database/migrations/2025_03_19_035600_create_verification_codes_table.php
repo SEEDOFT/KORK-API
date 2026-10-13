@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateVerificationCodesTable extends Migration
 {
-    public function up() : void
+    public function up(): void
     {
         Schema::create('verification_codes', function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -17,7 +17,7 @@ class CreateVerificationCodesTable extends Migration
         });
     }
 
-    public function down() : void
+    public function down(): void
     {
         Schema::dropIfExists('verification_codes');
     }

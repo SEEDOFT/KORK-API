@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Event;
 use App\Models\Organizer;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class OrganizerSeeder extends Seeder
@@ -19,7 +18,7 @@ class OrganizerSeeder extends Seeder
         for ($i = 0; $i < count($events); $i++) {
             $event = $events->random();
             Organizer::factory()->create([
-                'event_id' => $event->id
+                'event_id' => $event->id,
             ]);
         }
     }

@@ -19,7 +19,7 @@ class PaymentMethodResource extends JsonResource
             'card_number' => $this->card_number,
             'card_holder_name' => $this->card_holder_name,
             'expired_date' => $this->expired_date,
-            'cvv' => $this->cvv
+            'cvv' => $this->cvv,
         ];
     }
 }

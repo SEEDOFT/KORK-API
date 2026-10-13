@@ -13,7 +13,7 @@ class Attendee extends Model
     protected $fillable = [
         'user_id',
         'buy_ticket_id',
-        'event_id'
+        'event_id',
     ];
 
     public function user(): BelongsTo

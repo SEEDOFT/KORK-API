@@ -17,7 +17,7 @@ class Ticket extends Model
         'qty',
         'available_qty',
         'sold_qty',
-        'price'
+        'price',
     ];
 
     protected $casts = [
@@ -25,7 +25,7 @@ class Ticket extends Model
         'qty' => 'integer',
         'available_qty' => 'integer',
         'sold_qty' => 'integer',
-        'price' => 'decimal:2'
+        'price' => 'decimal:2',
     ];
 
     public function event(): BelongsTo

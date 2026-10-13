@@ -72,7 +72,7 @@ Route::middleware(['auth:sanctum', 'throttle:1000,1'])->group(
 
         Route::apiResource('/users.buy-tickets', BuyTicketController::class)
             ->scoped()
-            ->only(['index', 'show',]);
+            ->only(['index', 'show']);
         Route::delete('/users/{user}/scan-tickets', [BuyTicketController::class, 'destroy']);
 
         Route::apiResource('/events.buy-tickets', BuyTicketController::class)

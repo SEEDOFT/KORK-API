@@ -9,12 +9,12 @@ class Bookmark extends Model
 {
     protected $fillable = [
         'user_id',
-        'event_id'
+        'event_id',
     ];
 
     protected $casts = [
         'user_id' => 'integer',
-        'event_id' => 'integer'
+        'event_id' => 'integer',
     ];
 
     public function event(): BelongsTo

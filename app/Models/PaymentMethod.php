@@ -15,13 +15,13 @@ class PaymentMethod extends Model
         'card_number',
         'card_holder_name',
         'expired_date',
-        'cvv'
+        'cvv',
     ];
 
     protected $casts = [
         'user_id' => 'integer',
         'card_number' => 'integer',
-        'cvv' => 'integer'
+        'cvv' => 'integer',
     ];
 
     public function user(): BelongsTo

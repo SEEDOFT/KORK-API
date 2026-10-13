@@ -4,7 +4,6 @@ namespace App\Http\Resources\Ticket;
 
 use App\Http\Resources\Event\EventResource;
 use App\Http\Resources\User\AllUserResource;
-use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,7 +24,7 @@ class AllBoughtTicketResource extends JsonResource
             'ticket_code' => $this->ticket_code,
             'price' => $this->price,
             'payment_status' => $this->payment_status,
-            'buy_at' => date("Y-m-d H:i:s", strtotime($this->created_at))
+            'buy_at' => date('Y-m-d H:i:s', strtotime($this->created_at)),
         ];
     }
 }

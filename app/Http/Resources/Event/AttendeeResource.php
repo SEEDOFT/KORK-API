@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Event;
 
-use App\Models\Attendee;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

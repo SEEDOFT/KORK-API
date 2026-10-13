@@ -9,8 +9,9 @@ class LoginResource extends JsonResource
 {
     /**
      * pick token by default
-     * @param mixed $resource
-     * @param mixed $token
+     *
+     * @param  mixed  $resource
+     * @param  mixed  $token
      */
     public function __construct($resource, $token = null)
     {
@@ -27,7 +28,7 @@ class LoginResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'token' => $this->token
+            'token' => $this->token,
         ];
     }
 }

@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\BuyTicket;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\BuyTicket>
+ * @extends Factory<BuyTicket>
  */
 class BuyTicketFactory extends Factory
 {

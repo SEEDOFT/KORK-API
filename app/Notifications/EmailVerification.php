@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Wotz\VerificationCode\Notifications\VerificationCodeCreatedInterface;
@@ -11,7 +10,9 @@ use Wotz\VerificationCode\Notifications\VerificationCodeCreatedInterface;
 class EmailVerification extends Notification implements VerificationCodeCreatedInterface
 {
     use Queueable;
+
     public $code;
+
     /**
      * Create a new notification instance.
      */
@@ -39,7 +40,7 @@ class EmailVerification extends Notification implements VerificationCodeCreatedI
             ->from('korkapp.team@gmail.com', 'Kork App Team')
             ->subject('Your verification code')
             ->greeting('Hello!')
-            ->line('Your verification code: ' . $this->code)
+            ->line('Your verification code: '.$this->code)
             ->salutation("Best regards,\n\nKork App");
     }
 
@@ -54,5 +55,4 @@ class EmailVerification extends Notification implements VerificationCodeCreatedI
             //
         ];
     }
-
 }

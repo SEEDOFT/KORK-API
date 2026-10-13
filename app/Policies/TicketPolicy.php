@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TicketPolicy
 {
@@ -36,7 +35,6 @@ class TicketPolicy
     /**
      * Determine whether the user can update the model.
      */
-
     public function update(User $user, Ticket $ticket): bool
     {
         return $user->id === $ticket->event->user_id;
@@ -49,6 +47,7 @@ class TicketPolicy
     {
         return $user->id === $ticket->event->user_id;
     }
+
     /**
      * Determine whether the user can restore the model.
      */

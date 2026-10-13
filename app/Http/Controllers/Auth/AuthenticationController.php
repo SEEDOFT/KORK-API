@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\Auth\LoginResource;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,8 +14,8 @@ class AuthenticationController extends Controller
 {
     /**
      * Summary of login
-     * @param \App\Http\Requests\Auth\LoginRequest $request
-     * @return LoginResource|mixed|\Illuminate\Http\JsonResponse
+     *
+     * @return LoginResource|mixed|JsonResponse
      */
     public function login(LoginRequest $request)
     {
@@ -22,15 +23,15 @@ class AuthenticationController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
-                'error' => 'The provided credentials is incorrect...!'
+                'error' => 'The provided credentials is incorrect...!',
             ], 422);
         }
 
-        if (!Hash::check($request->password, $user->password)) {
+        if (! Hash::check($request->password, $user->password)) {
             return response()->json([
-                'error' => 'The provided credentials is incorrect...!'
+                'error' => 'The provided credentials is incorrect...!',
             ], 422);
         }
 
@@ -38,15 +39,15 @@ class AuthenticationController extends Controller
 
         return response()->json([
             'id' => $user->id,
-            'token' => $token
+            'token' => $token,
         ], 200);
 
     }
 
     /**
      * Summary of logout
-     * @param \Illuminate\Http\Request $request
-     * @return mixed|\Illuminate\Http\JsonResponse
+     *
+     * @return mixed|JsonResponse
      */
     public function logout(Request $request)
     {
@@ -54,7 +55,7 @@ class AuthenticationController extends Controller
         $user->tokens()->delete();
 
         return response()->json([
-            'message' => 'Successfully logged out.'
+            'message' => 'Successfully logged out.',
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Ticket;
 
 use App\Models\Ticket;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterSingleTicketType extends FormRequest
@@ -18,7 +19,7 @@ class RegisterSingleTicketType extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -32,7 +33,7 @@ class RegisterSingleTicketType extends FormRequest
                     $existingTypes = Ticket::where('event_id', $eventId)->pluck('ticket_type')->toArray();
 
                     if (count($existingTypes) >= 4) {
-                        $fail("This event already has all 4 ticket types. No more can be added.");
+                        $fail('This event already has all 4 ticket types. No more can be added.');
                     }
 
                     if (in_array($value, $existingTypes)) {
@@ -42,13 +43,13 @@ class RegisterSingleTicketType extends FormRequest
                     $allowedTypes = ['vvip', 'vip', 'standard', 'normal'];
                     $remainingTypes = array_diff($allowedTypes, $existingTypes);
 
-                    if (count($existingTypes) == 2 && !in_array($value, $remainingTypes)) {
-                        $fail("You can only add the remaining ticket types: " . implode(', ', $remainingTypes));
+                    if (count($existingTypes) == 2 && ! in_array($value, $remainingTypes)) {
+                        $fail('You can only add the remaining ticket types: '.implode(', ', $remainingTypes));
                     }
-                }
+                },
             ],
             'qty' => ['required', 'integer', 'min:1'],
-            'price' => ['required', 'numeric', 'min:0']
+            'price' => ['required', 'numeric', 'min:0'],
         ];
     }
 }

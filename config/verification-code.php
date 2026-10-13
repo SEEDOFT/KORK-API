@@ -1,6 +1,7 @@
 <?php
 
 use App\Notifications\EmailVerification;
+use Wotz\VerificationCode\Models\VerificationCode;
 
 return [
     /*
@@ -74,7 +75,7 @@ return [
     |   - \Wotz\VerificationCode\Models\VerificationCode
     |
     */
-    'model' => Wotz\VerificationCode\Models\VerificationCode::class,
+    'model' => VerificationCode::class,
 
     /*
     |--------------------------------------------------------------------------

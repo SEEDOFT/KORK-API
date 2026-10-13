@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Ticket;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterTicketRequest extends FormRequest
@@ -17,7 +18,7 @@ class RegisterTicketRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -25,7 +26,7 @@ class RegisterTicketRequest extends FormRequest
             'tickets' => ['required', 'array', 'max:4'],
             'tickets.*.ticket_type' => ['required', 'string', 'in:vvip,vip,standard,normal', 'distinct'],
             'tickets.*.qty' => ['required', 'integer', 'min:10'],
-            'tickets.*.price' => ['required', 'numeric', 'min:0']
+            'tickets.*.price' => ['required', 'numeric', 'min:0'],
         ];
     }
 }

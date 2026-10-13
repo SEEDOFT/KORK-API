@@ -28,6 +28,7 @@ class BuyTicketController extends Controller
         Gate::authorize('viewAny', $user);
 
         $perPage = request()->query('per_page', 15);
+
         return AllBoughtTicketResource::collection($user->buyTickets()->paginate($perPage));
     }
 
@@ -42,7 +43,7 @@ class BuyTicketController extends Controller
 
         if (request()->user()->id === $event->user_id) {
             return response()->json([
-                'error' => 'User cannot buy their own ticket'
+                'error' => 'User cannot buy their own ticket',
             ], 409);
         } else {
             try {
@@ -52,9 +53,9 @@ class BuyTicketController extends Controller
                         ->where('event_id', $event->id)
                         ->first();
 
-                    if (!$ticket) {
+                    if (! $ticket) {
                         return response()->json([
-                            'error' => 'Ticket ID ' . $ticketData['ticket_id'] . ' does not belong to this event'
+                            'error' => 'Ticket ID '.$ticketData['ticket_id'].' does not belong to this event',
                         ], 400);
                     }
                 }
@@ -65,11 +66,11 @@ class BuyTicketController extends Controller
                         $requestedQty = $ticketData['qty'];
 
                         if ($ticket->available_qty < $requestedQty) {
-                            throw new Exception("Insufficient quantity for ticket type: " . $ticket->ticket_type);
+                            throw new Exception('Insufficient quantity for ticket type: '.$ticket->ticket_type);
                         }
 
                         if ($paymentStatus['payment_status'] == false) {
-                            throw new Exception("Must be paying first to get your ticket");
+                            throw new Exception('Must be paying first to get your ticket');
                         }
 
                         $ticket->available_qty -= $requestedQty;
@@ -105,7 +106,7 @@ class BuyTicketController extends Controller
 
             } catch (Exception $e) {
                 return response()->json([
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ], 400);
             }
         }
@@ -117,6 +118,7 @@ class BuyTicketController extends Controller
     public function show(User $user, BuyTicket $buyTicket)
     {
         Gate::authorize('view', $buyTicket);
+
         return SingleBoughtTicketResource::make($buyTicket);
     }
 
@@ -127,7 +129,7 @@ class BuyTicketController extends Controller
     {
         if (auth()->id() !== $user->id) {
             return response()->json([
-                'error' => 'Unauthorized: You are not the correct user.'
+                'error' => 'Unauthorized: You are not the correct user.',
             ], 403);
         }
 
@@ -141,22 +143,25 @@ class BuyTicketController extends Controller
         foreach ($ticketCodes as $ticketCode) {
             $buyTicket = BuyTicket::where('ticket_code', $ticketCode)->first();
 
-            if (!$buyTicket) {
+            if (! $buyTicket) {
                 $errorMessage = 'Ticket not found';
+
                 continue;
             }
 
             $event = Event::find($buyTicket->event_id);
             $ticket = Ticket::find($buyTicket->ticket_id);
 
-            if (!$event || !$ticket) {
+            if (! $event || ! $ticket) {
                 $errorMessage = 'Invalid event or ticket type';
+
                 continue;
             }
 
             $userHasAccess = $user->events()->where('id', $event->id)->exists();
-            if (!$userHasAccess) {
+            if (! $userHasAccess) {
                 $errorMessage = 'Unauthorized: You do not have access to this event';
+
                 continue;
             }
 
@@ -165,11 +170,13 @@ class BuyTicketController extends Controller
 
             if ($now->lt($eventStartTime)) {
                 $errorMessage = 'Cannot scan: Event has not started yet';
+
                 continue;
             }
 
             if ($now->gt($eventEndTime)) {
                 $errorMessage = 'Cannot scan: Event has already ended';
+
                 continue;
             }
 
@@ -177,7 +184,7 @@ class BuyTicketController extends Controller
             $successCount++;
 
             $ticketTypeName = $ticket->ticket_type;
-            if (!isset($scannedTicketTypes[$ticketTypeName])) {
+            if (! isset($scannedTicketTypes[$ticketTypeName])) {
                 $scannedTicketTypes[$ticketTypeName] = 1;
             } else {
                 $scannedTicketTypes[$ticketTypeName]++;
@@ -187,16 +194,16 @@ class BuyTicketController extends Controller
         if ($successCount > 0) {
             $successMessage = '';
             foreach ($scannedTicketTypes as $type => $count) {
-                $successMessage .= ($successMessage ? ', ' : '') . $count . ' ' . $type;
+                $successMessage .= ($successMessage ? ', ' : '').$count.' '.$type;
             }
 
             return response()->json([
-                'success' => $successMessage
+                'success' => $successMessage,
             ], 200);
         }
 
         return response()->json([
-            'error' => $errorMessage ?? 'No tickets could be scanned'
+            'error' => $errorMessage ?? 'No tickets could be scanned',
         ], 400);
     }
 }
